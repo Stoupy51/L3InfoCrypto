@@ -17,7 +17,7 @@ class ChiffreurVigenere(CodeurCA):
             self.keySize = len(key)
 
     def __str__(self):
-        return f"ChiffreurVigenere de avec clé '{self.key}'"
+        return f"ChiffreurVigenere avec clé '{self.key}'"
     def __repr__(self):
         return f"ChiffreurVigenere('{self.key}')"
 
@@ -40,7 +40,7 @@ class ChiffreurVigenere(CodeurCA):
     def binDecode(self, monBinC:Binaire603) -> Binaire603:
         """
         >>> ChiffreurVigenere("bonjour").binDecode(Binaire603([1,2,3,4,255]))
-        ???
+        Binaire603([ 0x9f, 0x93, 0x95, 0x9a, 0x90])
         """
         r = []
         i = 0
@@ -51,21 +51,20 @@ class ChiffreurVigenere(CodeurCA):
 
 
     def demo():
-        """monCodeur=ChiffreurVigenere(13)
+        monCodeur = ChiffreurVigenere("premier test chiffreur vigenere")
         for k in range(3):
-            monBin=Binaire603.exBin603(num=k,taille=25)
-            print("Bin:",monBin)
-            monBinCr=monCodeur.binCode(monBin)
-            print("Bin Codée:",monBinCr)
-            print("monBinCr décodé est égal à Monbin ?",monCodeur.binDecode(monBinCr)==monBin)
+            monBin = Binaire603.exBin603(num=k, taille=25)
+            print(f"\nBin : {monBin}")
+            monBinCr = monCodeur.binCode(monBin)
+            print(f"Bin Codée : {monBinCr}")
+            print("Sont-ils égaux une fois monBinCr décodé ?", monCodeur.binDecode(monBinCr) == monBin)
 
-        montext='Bonjour les amis !'
-        lb=Binaire603(montext)
-        chif=ChiffreurVigenere(1)
-        lbc=chif.binCode(lb)
-        lbd=chif.binDecode(lbc)
-        print(f"{chif} a codé le texte '{montext}' en '{lbc.toString()}' et a décodé en '{lbd.toString()}' ")
-        """
+        montext = 'Bonjour les amis !'
+        lb = Binaire603(montext)
+        chif = ChiffreurVigenere("chiffreur 2 test")
+        lbc = chif.binCode(lb)
+        lbd = chif.binDecode(lbc)
+        print(f"\n{chif} a codé le texte '{montext}' en '{lbc.toString()}' et a décodé en '{lbd.toString()}' ")
         return
 
 
