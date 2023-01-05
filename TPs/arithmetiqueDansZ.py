@@ -438,6 +438,13 @@ class ElementDeZnZ(object):
         True
         """
         return ElementDeZnZ(self.rep ** q, self.n)
+    
+    def __rpow__(self,q):
+        """
+        >>> 3**ElementDeZnZ(2,10)
+        ElementDeZnZ(9,10)
+        """
+        return self.__pow__(q)
 
 
     def __int__(self):
