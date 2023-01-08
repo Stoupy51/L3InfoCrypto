@@ -507,7 +507,7 @@ class ElementDeZnZ(object):
 
         ElementDeZnZ(2,10).inverse() doit renvoyer une erreur
         """
-        u,v,d = bezout(self.rep,self.n)
+        u,_,d = bezout(self.rep,self.n)
         assert d == 1,f"{self} n'est pas inversible !"
         #a et n premiers entre eux
         return ElementDeZnZ(u,self.n)     #a.u=1(n)
