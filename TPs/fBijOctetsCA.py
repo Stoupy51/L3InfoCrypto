@@ -65,7 +65,7 @@ class fFeistel(object):
         right = octet & 0x0F
         print(f"octet, lk = {octet}, {self.lk}")
         for i in range(self.n):
-            left, right = right, left ^ self.f.valInv(right).rep #^ self.lk[i]
+            right, left = left, right ^ self.f.valInv(left).rep
         print(f"left,right = {left},{right}")
         return left ^ right
 
