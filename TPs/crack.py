@@ -19,8 +19,8 @@ def crackAffine(lb: Binaire603):
     # Méthode pour comparer les fréquences du français
     # avec le texte codé
     # formule :
-    # Ysp = (a * Ye + b) % 256
-    # Xsp = (a * Xe + b) % 256
+    # Ysp = (a * Xsp + b) % 256
+    # Ye = (a * Xe + b) % 256
     Ysp = lf.index(max(lf))
     lf.pop(Ysp)
     Ye = lf.index(max(lf))

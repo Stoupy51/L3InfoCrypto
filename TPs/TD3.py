@@ -1,4 +1,7 @@
 
+import time
+import timeit
+import tp_primes
 from matplotlib import pyplot as plt
 from arithmetiqueDansZ import *
 
@@ -59,13 +62,13 @@ def lBasesDeTestsDePrimalite(nbits = 32, verbose = True):
 	à partir de 1105, il faut tester avec base 2, 3, 5
 	signifiant que 1105 est le premier nombre de faux positif avec 2 et 3
 
-	>>> lBasesDeTestsDePrimalite(10, False)
+	>>> lBasesDeTestsDePrimalite(11, False)
 	[(341, [2, 3]), (1105, [2, 3, 5]), (1729, [2, 3, 5, 7])]
-	>>> lBasesDeTestsDePrimalite(9, False)
+	>>> lBasesDeTestsDePrimalite(10, False)
 	[(341, [2, 3])]
 	"""
-	n = 2 ** nbits * 2
-	lp = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31]
+	n = 2 ** nbits
+	lp = tp_primes.p1000
 	l = []
 	for k in range(3, n, 2):
 		if estPremierOuPseudoPremierDansLaBase(k, 2) and not estPremier(k):
@@ -96,9 +99,11 @@ if __name__ == "__main__":
 	
 	# Graphique de densité des nombres premiers jusqu'à 1000
 	lx = [i for i in range(1000)]
-	ly = [estPremierOuPseudoPremierDansLaBase(i, 2) for i in range(1000)]
+	ly = tp_primes.p1000
 	#ly = [isprime(i) for i in range(1000)]
-	plt.plot(lx, ly, '*')
+	#print(lx)
+	#print(ly)
+	plt.plot(lx, ly, '-')
 	plt.title("Graphique de densité des nombres premiers")
 	plt.show()
 
@@ -107,6 +112,15 @@ if __name__ == "__main__":
 
 	print(estPremierOuPseudoPremierDansLaBase(341, 2))
 
-	print(lBasesDeTestsDePrimalite(10), False)
-	print(lBasesDeTestsDePrimalite(9), False)
+	print(lBasesDeTestsDePrimalite(10, False))
+	print(lBasesDeTestsDePrimalite(9, False))
+
+	x = lambda: estPremierOuPseudoPremierDansLaBase(121, 3)
+	print(f"Temps d'éxécution :", timeit.timeit(x, number = 100))
+
+	n = 16
+	t = time.time()
+	print(f"\nBases de Tests pour {n} bits :\n",lBasesDeTestsDePrimalite(n, False))
+	print(f"\nTemps d'éxécution :", round((time.time() - t), 3), "s")
+
 
