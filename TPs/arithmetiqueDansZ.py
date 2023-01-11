@@ -155,6 +155,7 @@ def estPremier(n):
     """
     if n==1 : return False
     if n==2: return True
+    if n==3: return True
     if n%2==0: return False
     if n>1E6:return isprime(n) #Pour éviter les ralentissements
     d=3

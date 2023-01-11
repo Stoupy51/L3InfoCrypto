@@ -23,20 +23,17 @@ def estPremierOuPseudoPremierDansLaBase(n, a):
 		t //= 2
 		s += 1
 	
-	if (a**t - 1) % n == 0:
+	b = ElementDeZnZ(a ** t, n)
+	if b == 1:
 		return True
 
 	# a**(t*(2**s)) -1
 	# ==
 	# (a**t - 1)(a**t + 1)...(a**((2**s) * t) + 1)
-	s1 = 0
-	while s1 <= s:
-		p = t * (2**s1)
-		if (a**p + 1) % n == 0:
-			return True
-		s1 += 1
-
-	return False
+	while s > 0 and (b+1) != 0 and (b-1) != 0:
+		b = b**2
+		s -= 1
+	return (b+1) == 0 or (b-1) == 0
 
 def lNombresDePoulet(nbits = 16):
 	""" Renvoie la liste des nombres de Poulet inférieurs à 2**nbits
@@ -45,9 +42,41 @@ def lNombresDePoulet(nbits = 16):
 	[341, 561, 645]
 	"""
 	l = []
-	for i in range(3, 2**(nbits//2), 2):
+	for i in range(3, 2**(nbits), 2):
 		if estPremierOuPseudoPremierDansLaBase(i, 2) and not estPremier(i):
 			l.append(i)
+	return l
+
+def estPremier10bits(n):
+	if n in [341, 561, 645]:
+		return False
+	return estPremierOuPseudoPremierDansLaBase(n, 2)
+
+def lBasesDeTestsDePrimalite(nbits = 32, verbose = True):
+	""" Renvoie la liste des bases à tester selon
+	la valeur du nombre premier à tester :
+	>>> lBasesDeTestsDePrimalite(11, False)
+	[(341, [2, 3]), (1105, [2, 3, 5])]
+
+	à partir de 341, il faut tester avec base 2 et 3
+	à partir de 1105, il faut tester avec base 2, 3, 5
+	signifiant que 1105 est le premier nombre de faux positif avec 2 et 3
+	"""
+	n = 2 ** nbits
+	lp = [2, 3, 5, 7, 11, 13, 17, 19, 23]
+	l = []
+	for k in range(3, n, 2):
+		if estPremierOuPseudoPremierDansLaBase(k, 2) and not estPremier(k):
+			lc = []
+			for p in lp:
+				lc.append(p)
+				if estPremierOuPseudoPremierDansLaBase(k, p):
+					if verbose:
+						print(f"Faux positif avec {p} : ", k)
+				else:
+					break
+			# Append si lc n'est pas déjà présent
+			l.append((k, lc))
 	return l
 
 if __name__ == "__main__":
@@ -69,3 +98,5 @@ if __name__ == "__main__":
 
 	print(estPremierOuPseudoPremierDansLaBase(121, 3))
 	print(estPremierOuPseudoPremierDansLaBase(121, 2))
+
+	print(estPremierOuPseudoPremierDansLaBase(341, 2))
