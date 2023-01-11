@@ -1,4 +1,5 @@
 
+from matplotlib import pyplot as plt
 from arithmetiqueDansZ import *
 
 def estPremierOuPseudoPremierDansLaBase(n, a):
@@ -95,17 +96,17 @@ if __name__ == "__main__":
 	
 	# Graphique de densité des nombres premiers jusqu'à 1000
 	lx = [i for i in range(1000)]
-	#ly = [estPremierOuPseudoPremierDansLaBase(i, 2) for i in range(1000)]
-	#ly = [isPrime(i) for i in range(1000)]
-	#plt.plot(lx, ly, '*')
-	#plt.title("Graphique de densité des nombres premiers")
-	#plt.show()
-
+	ly = [estPremierOuPseudoPremierDansLaBase(i, 2) for i in range(1000)]
+	#ly = [isprime(i) for i in range(1000)]
+	plt.plot(lx, ly, '*')
+	plt.title("Graphique de densité des nombres premiers")
+	plt.show()
 
 	print(estPremierOuPseudoPremierDansLaBase(121, 3))
 	print(estPremierOuPseudoPremierDansLaBase(121, 2))
 
 	print(estPremierOuPseudoPremierDansLaBase(341, 2))
 
-	lBasesDeTestsDePrimalite(10, True)
-	lBasesDeTestsDePrimalite(9, True)
+	print(lBasesDeTestsDePrimalite(10), False)
+	print(lBasesDeTestsDePrimalite(9), False)
+
