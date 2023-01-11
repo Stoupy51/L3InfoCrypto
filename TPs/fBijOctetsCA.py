@@ -47,7 +47,7 @@ class fFeistel(object):
         return f"fFeistel({self.k}, {self.f.__repr__()}, {self.n})"
 
     def __call__(self, octet):
-        left = octet & 0xF0
+        left = (octet & 0xF0) >> 4
         right = octet & 0x0F
         print(f"octet, lk = {octet}, {self.lk}")
         for i in range(self.n):
@@ -61,7 +61,7 @@ class fFeistel(object):
         >>> fFeistel().valInv(fFeistel()(51))
         51
         """
-        left = octet & 0xF0
+        left = (octet & 0xF0) >> 4
         right = octet & 0x0F
         print(f"octet, lk = {octet}, {self.lk}")
         for i in range(self.n):
