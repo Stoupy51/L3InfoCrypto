@@ -22,15 +22,16 @@ def estPremierOuPseudoPremierDansLaBase(n, a):
 		t //= 2
 		s += 1
 	
+	if (a**t - 1) % n == 0:
+		return True
+
 	# a**(t*(2**s)) -1
 	# ==
 	# (a**t - 1)(a**t + 1)...(a**((2**s) * t) - 1)(a**((2**s) * t) + 1)
 	s1 = 0
 	while s1 <= s:
 		p = t * (2**s1)
-		if (a**p - 1) % n == 0:
-			return True
-		elif (a**p + 1) % n == 0:
+		if (a**p + 1) % n == 0:
 			return True
 		s1 += 1
 
