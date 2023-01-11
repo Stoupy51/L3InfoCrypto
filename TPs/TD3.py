@@ -1,5 +1,4 @@
 
-import timeit
 from arithmetiqueDansZ import *
 
 def estPremierOuPseudoPremierDansLaBase(n, a):
@@ -29,7 +28,7 @@ def estPremierOuPseudoPremierDansLaBase(n, a):
 
 	# a**(t*(2**s)) -1
 	# ==
-	# (a**t - 1)(a**t + 1)...(a**((2**s) * t) + 1)
+	# (a**t - 1) (a**t + 1) ... (a**((2**s) * t) + 1)
 	while s > 0 and (b+1) != 0 and (b-1) != 0:
 		b = b**2
 		s -= 1
@@ -55,15 +54,17 @@ def estPremier10bits(n):
 def lBasesDeTestsDePrimalite(nbits = 32, verbose = True):
 	""" Renvoie la liste des bases à tester selon
 	la valeur du nombre premier à tester :
-	>>> lBasesDeTestsDePrimalite(11, False)
-	[(341, [2, 3]), (1105, [2, 3, 5])]
-
 	à partir de 341, il faut tester avec base 2 et 3
 	à partir de 1105, il faut tester avec base 2, 3, 5
 	signifiant que 1105 est le premier nombre de faux positif avec 2 et 3
+
+	>>> lBasesDeTestsDePrimalite(10, False)
+	[(341, [2, 3]), (1105, [2, 3, 5]), (1729, [2, 3, 5, 7])]
+	>>> lBasesDeTestsDePrimalite(9, False)
+	[(341, [2, 3])]
 	"""
-	n = 2 ** nbits
-	lp = [2, 3, 5, 7, 11, 13, 17, 19, 23]
+	n = 2 ** nbits * 2
+	lp = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31]
 	l = []
 	for k in range(3, n, 2):
 		if estPremierOuPseudoPremierDansLaBase(k, 2) and not estPremier(k):
@@ -76,7 +77,12 @@ def lBasesDeTestsDePrimalite(nbits = 32, verbose = True):
 				else:
 					break
 			# Append si lc n'est pas déjà présent
-			l.append((k, lc))
+			ajout = True
+			for _,j in l:
+				if (j == lc):
+					ajout = False
+			if ajout:
+				l.append((k, lc))
 	return l
 
 if __name__ == "__main__":
@@ -84,7 +90,7 @@ if __name__ == "__main__":
 	doctest.testmod()
 
 	# Ex 1 : nombre premier de 60 bits, on fait 2^30 tests (calculs jusqu'à la racine carré du nombre)
-	# 2^31 == 2 147 483 648					: 10^9
+	# 2^31 == 2 147 483 648				 	: 10^9
 	# 2^64 == 18 446 744 073 709 551 616	: 10^19
 	
 	# Graphique de densité des nombres premiers jusqu'à 1000
@@ -100,3 +106,6 @@ if __name__ == "__main__":
 	print(estPremierOuPseudoPremierDansLaBase(121, 2))
 
 	print(estPremierOuPseudoPremierDansLaBase(341, 2))
+
+	lBasesDeTestsDePrimalite(10, True)
+	lBasesDeTestsDePrimalite(9, True)
