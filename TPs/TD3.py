@@ -1,7 +1,6 @@
 
 import timeit
-#from arithmetiqueDansZ import *
-
+from arithmetiqueDansZ import *
 
 def estPremierOuPseudoPremierDansLaBase(n, a):
 	""" Teste la pseudo-primalité d'un entier n en base a
@@ -13,6 +12,8 @@ def estPremierOuPseudoPremierDansLaBase(n, a):
 	"""
 	if n == 1:
 		return False
+	if n % 2 == 0:
+		return n == 2
 	
 	# n-1 = t*(2**s)
 	# Tant que t est divisible par 2, augmenter s de 1
@@ -36,6 +37,18 @@ def estPremierOuPseudoPremierDansLaBase(n, a):
 		s1 += 1
 
 	return False
+
+def lNombresDePoulet(nbits = 16):
+	""" Renvoie la liste des nombres de Poulet inférieurs à 2**nbits
+	c'est-à-dire pseudopremiers en base 2 voir suite A001567 de l'OEIS
+	>>> lNombresDePoulet(10)
+	[341, 561, 645]
+	"""
+	l = []
+	for i in range(3, 2**(nbits//2), 2):
+		if estPremierOuPseudoPremierDansLaBase(i, 2) and not estPremier(i):
+			l.append(i)
+	return l
 
 if __name__ == "__main__":
 	import doctest
