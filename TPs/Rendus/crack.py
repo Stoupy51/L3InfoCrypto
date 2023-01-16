@@ -82,12 +82,12 @@ if __name__ == "__main__":
     f3 = Binaire603.bin603DepuisFichier("Chiffre3.TXT")
     c3 = crackAffine(f3)
     print(c3)
-    print(c3.binDecode(f3).toString())
+    #print(c3.binDecode(f3).toString())
     
     f4 = Binaire603.bin603DepuisFichier("Chiffre4.TXT")
     c4 = crackAffine(f4)
     print(c4)
-    print(c4.binDecode(f4).toString())
+    #print(c4.binDecode(f4).toString())
     
     
     print("\n\n\nRappel des chiffreurs trouvés :")

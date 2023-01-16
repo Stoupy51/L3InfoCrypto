@@ -443,9 +443,9 @@ class ElementDeZnZ(object):
     def __rpow__(self,q):
         """
         >>> 3**ElementDeZnZ(2,10)
-        ElementDeZnZ(8,10)
+        ElementDeZnZ(9,10)
         """
-        return self.__pow__(q)
+        return ElementDeZnZ(q ** self.rep, self.n)
 
 
     def __int__(self):
