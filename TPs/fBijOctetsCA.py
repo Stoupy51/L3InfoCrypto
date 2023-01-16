@@ -1,6 +1,7 @@
 
 import doctest
 from random import *
+from bijectionDOctets import *
 import matplotlib.pyplot as plt
 
 from arithmetiqueDansZ import *
@@ -36,10 +37,10 @@ class fBijAffine(object):
         return (self.a_inv * (octet - self.b))
 
 class fFeistel(object):    
-    def __init__(self, k = 2, f = fBijParDecalage(37), n = 1):
+    def __init__(self, k = 2, f = fPermut.f, n = 1):
         self.k = k
         seed(self.k)
-        self.lk = [randint(0, 255) for _ in range(n)]
+        self.lk = [randint(0, 15) for _ in range(n)]
         self.f = f
         self.n = n
 
@@ -49,12 +50,11 @@ class fFeistel(object):
     def __call__(self, octet):
         left = (octet & 0xF0) >> 4
         right = octet & 0x0F
-        print(f"octet, lk = {octet}, {self.lk}")
+        #print(f"octet, lk = {octet}, {self.lk}")
         for i in range(self.n):
-            left, right = right, left ^ self.f(right).rep #^ self.lk[i]
-        print(f"left,right = {left},{right}")
-        octet = left ^ right
-        return octet
+            left, right = right, left ^ self.f(self.lk[i], right)
+        #print(f"left,right = {left},{right}")
+        return (left << 4) ^ right
 
     def valInv(self, octet):
         """Fonction inverse de __call__
@@ -63,11 +63,11 @@ class fFeistel(object):
         """
         left = (octet & 0xF0) >> 4
         right = octet & 0x0F
-        print(f"octet, lk = {octet}, {self.lk}")
-        for i in range(self.n):
-            right, left = left, right ^ self.f.valInv(left).rep
-        print(f"left,right = {left},{right}")
-        return left ^ right
+        #print(f"octet, lk = {octet}, {self.lk}")
+        for i in range(self.n-1, -1, -1):
+            right, left = left, right ^ self.f(self.lk[i], left)
+        #print(f"left,right = {left},{right}")
+        return (left << 4) ^ right
 
 
 
@@ -92,18 +92,11 @@ if __name__ == "__main__":
 
     # Feistel
     for c in range(1,8):
-        f = fFeistel(5, fBijAffine(7, 1347), c)
+        f = fFeistel(5, fPermut.f, c)
         lx = [i for i in range(256)]
         ly = [f(i) for i in lx]
         plt.plot(lx, ly, '*')
         plt.title(f"Graphique de {f}")
         plt.show()
-    
-    for i in [0x0F, 0xF0, 0xFF, 0xC5]:
-        f = fFeistel(5, fBijAffine(7, 1347), 7)
-        c = f(i)
-        d = f.valInv(c)
-        print(f"c,d,i = {c},{d},{i}\n")
-
 
 
