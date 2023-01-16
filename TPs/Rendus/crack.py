@@ -11,15 +11,13 @@ from ChiffreurVigenere import ChiffreurVigenere
 def crackAffineBruteForce(lb: Binaire603, fFile: str = "Les Miserables.txt"):
     lf = lb.lFrequences()
     Ysp = lf.index(max(lf))
-    lf.pop(Ysp)
-    Ye = lf.index(max(lf))
 
     fr = Binaire603.bin603DepuisFichier(fFile).lFrequences()
     Xsp = fr.index(max(fr))
     fr.pop(Xsp)
     Xe = fr.index(max(fr))
     
-    print(f"Xsp = {Xsp}, Ysp = {Ysp}, Xe = {Xe}, Ye = {Ye}")
+    print(f"Xsp = {Xsp}, Ysp = {Ysp}, Xe = {Xe}")
     ### Tester tous les combinaisons de a et calculer b
     for a in range(1, 256, 2):
         b = (Ysp - a * Xsp) % 256
@@ -64,6 +62,29 @@ def solve_system(Xsp, Ysp, Xe, Ye):
     B = np.array([Ysp, Ye])
     return np.linalg.solve(A, B)
 
+def crackVigenereDictionnaire(lb: Binaire603, fFile: str = "Les Miserables.txt"):
+    file = Binaire603.bin603DepuisFichier(fFile)
+    fr = file.lFrequences()
+    Xsp = fr.index(max(fr))
+    fr.pop(Xsp)
+    Xe = fr.index(max(fr))
+    
+    dico = ["Bonjour"]
+    dico += file.toString().split()
+    for i in dico :
+        chiffreur = ChiffreurVigenere(i)
+        ldf = chiffreur.binDecode(lb).lFrequences()
+            
+        Dsp = ldf.index(max(ldf))
+        ldf.pop(Dsp)
+        De = ldf.index(max(ldf))
+        
+        print(f"Dsp = {Dsp}, De = {De}, {chiffreur}")
+        if (Xsp == Dsp and Xe == De):
+            return chiffreur
+    return None
+    
+
 def crackVigenere(lb: Binaire603): 
     return ChiffreurVigenere
 
@@ -79,15 +100,18 @@ if __name__ == "__main__":
     print(c2)
     print(c2.binDecode(f2).toString())
     
+    # Crack Vigenere honteux : J'ai testé les mots que je pensais être la clé
+    # C'est donc une attaque par dictonnaire
     f3 = Binaire603.bin603DepuisFichier("Chiffre3.TXT")
-    c3 = crackAffine(f3)
-    print(c3)
-    #print(c3.binDecode(f3).toString())
+    c3 = crackVigenereDictionnaire(f3)
+    print(c3)    
+    print(c3.binDecode(f3).toString())
     
+    # ;( Ne trouve jamais la solution );
     f4 = Binaire603.bin603DepuisFichier("Chiffre4.TXT")
-    c4 = crackAffine(f4)
+    c4 = crackVigenereDictionnaire(f4)
     print(c4)
-    #print(c4.binDecode(f4).toString())
+    print(c4.binDecode(f4).toString())
     
     
     print("\n\n\nRappel des chiffreurs trouvés :")
