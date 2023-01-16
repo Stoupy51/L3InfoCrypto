@@ -101,6 +101,21 @@ def lBasesDeTestsDePrimalite(nbits = 32, la = tp_primes.p[0:1000], verbose = Tru
 				l.append((k, lc))
 	return l
 
+def estPremierUtilisantLesFonctionsAuDessus(n):
+	""" Renvoie True si n est premier, False sinon
+	>>> estPremierUtilisantLesFonctionsAuDessus(13917437)
+	True
+	>>> estPremierUtilisantLesFonctionsAuDessus(13917438)
+	False
+	>>> estPremierUtilisantLesFonctionsAuDessus(2)
+	True
+	>>> estPremierUtilisantLesFonctionsAuDessus(1)
+	False
+	>>> estPremierUtilisantLesFonctionsAuDessus(2514651655616)
+	False
+	"""
+	return estPremierOuPseudoPremierDansLesBases(n, tp_primes.p[0:n])
+
 if __name__ == "__main__":
 	import doctest
 	doctest.testmod()
