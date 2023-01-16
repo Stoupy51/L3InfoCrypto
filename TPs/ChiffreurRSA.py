@@ -9,7 +9,7 @@ from CodeurCA import CodeurCA
 
 class ChiffreurRSA(CodeurCA):
 	""""""
-	def __init__(self, e = 7, d = 23, n = 55):
+	def __init__(self, e = 7, d = 103, n = 209):
 		if isinstance(e, ChiffreurRSA):
 			self.e = e.e
 			self.d = e.d
@@ -41,18 +41,22 @@ class ChiffreurRSA(CodeurCA):
 	def __repr__(self):
 		return f"ChiffreurRSA({self.e=}, {self.d=}, {self.n=})"
 
-	def binCode(self, monBinD:Binaire603) -> list:
+	def binCode(self, monBinD):
 		""" Chiffre un message binaire en utilisant la clé publique
 		#>>> ChiffreurRSA().binCode(Binaire603("Bonjour"))
 		Binaire603([ 0x0a, 0x0a, 0x0a, 0x0a, 0x0a])
 		"""
+		if (isinstance(monBinD, str)):
+			monBinD = Binaire603(monBinD)
 		return [ (b ** self.e).rep for b in monBinD ]
 	
-	def __call__(self, monBinD:Binaire603) -> list:
+	def __call__(self, monBinD):
 		return self.binCode(monBinD)
 
-	def binDecode(self, monBinC:list) -> Binaire603:
-		return Binaire603([ (b ** self.d).rep for b in monBinC ])
+	def binDecode(self, monBinC):
+		if (isinstance(monBinC, str)):
+			monBinC = Binaire603(monBinC)
+		return [ (c ** self.d).rep for c in monBinC ]
 
 
 if __name__ == "__main__":
@@ -64,10 +68,12 @@ if __name__ == "__main__":
 	
 	f = ChiffreurRSA()
 	texte = "Bonjour"
-	c = f(Binaire603(texte))
+	c = f(texte)
 	d = f.binDecode(c)
 	print(f)
 	print("Texte :", texte)
+	print("Texte binaire :", Binaire603(texte).toString())
 	print("Chiffré :", c)
-	print("Déchiffré :", d.toString())
+	print("Déchiffré :", d)
+	print("Déchiffré :", Binaire603(d).toString())
 
