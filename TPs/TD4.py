@@ -1,4 +1,7 @@
 
+from arithmetiqueDansZ import *
+
+
 class ElemtE07(object):
 	def __init__(self, x, y = "Inf", p = 11):
 		if (isinstance(x, ElemtE07)):

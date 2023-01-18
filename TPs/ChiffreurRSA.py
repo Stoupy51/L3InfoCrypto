@@ -9,7 +9,7 @@ from CodeurCA import CodeurCA
 
 class ChiffreurRSA(CodeurCA):
 	""""""
-	def __init__(self, e = 7, d = 103, n = 209):
+	def __init__(self, e = 7, d = 103, n = 143):
 		if isinstance(e, ChiffreurRSA):
 			self.e = e.e
 			self.d = e.d
@@ -19,20 +19,21 @@ class ChiffreurRSA(CodeurCA):
 			self.d = ElementDeZnZ(d, n)
 			self.n = n
 	
-	def generateKeys():
-		#p = tp_primes.p[randint(0, tp_primes.pLen-1)]
-		p = tp_primes.p[randint(0, 10)]
+	def generateKeys(maxPrime = 100):
+		assert maxPrime < tp_primes.pLen, "maxPrime trop grand"
+		assert maxPrime >= 100, "maxPrime trop petit"
+		p = tp_primes.p[randint(0, maxPrime)]
 		q = p
 		while (p == q):
-			#q = tp_primes.p[randint(0, tp_primes.pLen-1)]
-			q = tp_primes.p[randint(0, 10)]
+			q = tp_primes.p[randint(0, maxPrime)]
 		n = p * q
 		phi = (p - 1) * (q - 1)
 		e = p
-		while (e == p or e == q or sontPremiers(e, phi) != 1):
-			#e = tp_primes.p[randint(0, tp_primes.pLen-1)]
-			e = tp_primes.p[randint(0, 10)]
-		d = ElementDeZnZ(e, phi).inverse().rep
+		d = n
+		while (e > phi or d > phi):
+			while (e == p or e == q or e > phi or sontPremiers(e, phi) != 1):
+				e = tp_primes.p[randint(0, maxPrime)]
+			d = ElementDeZnZ(e, phi).inverse().rep
 		#print(f"p = {p}, q = {q}, n = {n}, phi = {phi}, e = {e}, d = {d}")
 		return (e, d, n)
 
@@ -62,18 +63,34 @@ class ChiffreurRSA(CodeurCA):
 if __name__ == "__main__":
 	import doctest
 	doctest.testmod()
-	x = lambda: ChiffreurRSA.generateKeys()
-	print(f"Temps d'éxécution :", round(timeit.timeit(x, number = 100), 3), "s")
-	print(ChiffreurRSA.generateKeys())
-	
+	print("Très grosses clés :", ChiffreurRSA.generateKeys(tp_primes.pLen-1))
+	print("Très petites clés :", ChiffreurRSA.generateKeys())
+
+	# Test de chiffrement et déchiffrement
 	f = ChiffreurRSA()
 	texte = "Bonjour"
+	list1 = []
+	for i in texte:
+		list1.append(ord(i))
 	c = f(texte)
 	d = f.binDecode(c)
-	print(f)
+	print(f"\n{f}")
 	print("Texte :", texte)
-	print("Texte binaire :", Binaire603(texte).toString())
-	print("Chiffré :", c)
-	print("Déchiffré :", d)
+	print("Texte binaire :", list1)
+	print("Chiffré binaire :", c)
+	print("Déchiffré binaire :", d)
 	print("Déchiffré :", Binaire603(d).toString())
+ 
+	print("\nTest de déchiffrement avec 100 clés aléatoires : ")
+	for i in range(100):
+		ce, cd, cn = ChiffreurRSA.generateKeys(100)
+		f = ChiffreurRSA(ce, cd, cn)
+		c = f(texte)
+		d = f.binDecode(c)
+		if (i % 10 == 0):
+			print(f"Test {i+1}")
+		if (list1 != d):
+			print(f"Erreur de déchiffrement avec la clé {ce, cd, cn}")
+			raise Exception("Erreur de déchiffrement")
+	print("100 tests de déchiffrement réussis, toutes les clés sont valides !")
 

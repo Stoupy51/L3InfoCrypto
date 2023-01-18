@@ -77,7 +77,7 @@ class Binaire603(list):#Voir Object ?
         if verbose:print(f"lecture du fichier :{nomFic}")
 
         if nomFic[-4:].upper()==".TXT":
-            with open(nomFic, 'r') as f:
+            with open(nomFic, 'r', encoding="utf8") as f:
                 txt = f.read()
             return Binaire603(txt)
         else:

@@ -7,17 +7,37 @@ from arithmetiqueDansZ import *
 from Binaire603 import Binaire603
 from ChiffreurAffine import ChiffreurAffine
 from ChiffreurVigenere import ChiffreurVigenere
-from ChiffreurParDecalage import ChiffreurParDecalage
 
-def crackAffine(lb: Binaire603):
+def crackAffineBruteForce(lb: Binaire603, fFile: str = "Les Miserables.txt"):
     lf = lb.lFrequences()
+    Ysp = lf.index(max(lf))
 
-    ### Tester tous les combinaisons de a et b
-    #for a in range(1, 256, 3):
-    #    for b in range(256):
-    #        chiffreur = ChiffreurAffine(a,b)
-    #        ldf = chiffreur.binDecode(lb).lFrequences()
-    #        distance = 0
+    fr = Binaire603.bin603DepuisFichier(fFile).lFrequences()
+    Xsp = fr.index(max(fr))
+    fr.pop(Xsp)
+    Xe = fr.index(max(fr))
+    
+    print(f"Xsp = {Xsp}, Ysp = {Ysp}, Xe = {Xe}")
+    ### Tester tous les combinaisons de a et calculer b
+    for a in range(1, 256, 2):
+        b = (Ysp - a * Xsp) % 256
+
+        chiffreur = ChiffreurAffine(a,b)
+        if (chiffreur.a.estInversible()):
+            ldf = chiffreur.binDecode(lb).lFrequences()
+            
+            Dsp = ldf.index(max(ldf))
+            ldf.pop(Dsp)
+            De = ldf.index(max(ldf))
+        
+            print(f"Dsp = {Dsp}, De = {De}, {chiffreur}")
+            if (Xsp == Dsp and Xe == De):
+                return chiffreur
+    return ChiffreurAffine(-1,-1)
+
+
+def crackAffine(lb: Binaire603, fFile: str = "Les Miserables.txt"):
+    lf = lb.lFrequences()
     
     # Méthode pour comparer les fréquences du français
     # avec le texte codé
@@ -27,7 +47,7 @@ def crackAffine(lb: Binaire603):
     Ysp = lf.index(max(lf))
     lf.pop(Ysp)
     Ye = lf.index(max(lf))
-    fr = Binaire603.bin603DepuisFichier("../Les Miserables.txt").lFrequences()
+    fr = Binaire603.bin603DepuisFichier(fFile).lFrequences()
     Xsp = fr.index(max(fr))
     fr.pop(Xsp)
     Xe = fr.index(max(fr))
@@ -37,16 +57,67 @@ def crackAffine(lb: Binaire603):
     return ChiffreurAffine(round(a),round(b))
 
 def solve_system(Xsp, Ysp, Xe, Ye):
+    """Résout le système d'équations de fonction affine"""
     A = np.array([[Xsp, 1], [Xe, 1]])
     B = np.array([Ysp, Ye])
     return np.linalg.solve(A, B)
 
-def crackVigenere(lb: Binaire603) : 
+def crackVigenereDictionnaire(lb: Binaire603, fFile: str = "Les Miserables.txt"):
+    file = Binaire603.bin603DepuisFichier(fFile)
+    fr = file.lFrequences()
+    Xsp = fr.index(max(fr))
+    fr.pop(Xsp)
+    Xe = fr.index(max(fr))
+    
+    dico = ["Bonjour"]
+    dico += file.toString().split()
+    for i in dico :
+        chiffreur = ChiffreurVigenere(i)
+        ldf = chiffreur.binDecode(lb).lFrequences()
+            
+        Dsp = ldf.index(max(ldf))
+        ldf.pop(Dsp)
+        De = ldf.index(max(ldf))
+        
+        print(f"Dsp = {Dsp}, De = {De}, {chiffreur}")
+        if (Xsp == Dsp and Xe == De):
+            return chiffreur
+    return None
+    
+
+def crackVigenere(lb: Binaire603): 
     return ChiffreurVigenere
 
 if __name__ == "__main__":
     # Crack Affine
-    f1 = Binaire603.bin603DepuisFichier("../Chiffre2.TXT")
-    ca = crackAffine(f1)
-    print(ca)   
-    print(ca.binDecode(f1).toString())
+    f1 = Binaire603.bin603DepuisFichier("Chiffre1.TXT")
+    c1 = crackAffine(f1)
+    print(c1)
+    print(c1.binDecode(f1).toString())
+    
+    f2 = Binaire603.bin603DepuisFichier("Chiffre2.TXT")
+    c2 = crackAffineBruteForce(f2)
+    print(c2)
+    print(c2.binDecode(f2).toString())
+    
+    # Crack Vigenere honteux : J'ai testé les mots que je pensais être la clé
+    # C'est donc une attaque par dictonnaire
+    f3 = Binaire603.bin603DepuisFichier("Chiffre3.TXT")
+    c3 = crackVigenereDictionnaire(f3)
+    print(c3)    
+    print(c3.binDecode(f3).toString())
+    
+    # ;( Ne trouve jamais la solution );
+    f4 = Binaire603.bin603DepuisFichier("Chiffre4.TXT")
+    c4 = crackVigenereDictionnaire(f4)
+    print(c4)
+    print(c4.binDecode(f4).toString())
+    
+    
+    print("\n\n\nRappel des chiffreurs trouvés :")
+    print("Chiffre1.TXT :", c1)
+    print("Chiffre2.TXT :", c2)
+    print("Chiffre3.TXT :", c3)
+    print("Chiffre4.TXT :", c4)
+    
+
