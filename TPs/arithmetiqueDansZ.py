@@ -367,6 +367,8 @@ class ElementDeZnZ(object):
         """
         return ElementDeZnZ.__mul__(self, other)
 
+    def __div__(self, other):
+        return self.__floordiv__(other)
 
     def __floordiv__(self,other):
         """
@@ -388,19 +390,22 @@ class ElementDeZnZ(object):
         return ElementDeZnZ(u*(self.rep//d),self.n)
 
 
-    def __eq__(self,other):
+    def __eq__(self, other):
         """
-        >>> ElementDeZnZ(9,10)==ElementDeZnZ(-1,10)
+        >>> ElementDeZnZ(9,10) == ElementDeZnZ(-1,10)
         True
-        >>> ElementDeZnZ(9,10)==ElementDeZnZ(1,10)
+        >>> ElementDeZnZ(9,10) == ElementDeZnZ(1,10)
         False
-        >>> ElementDeZnZ(9,10)==9
+        >>> ElementDeZnZ(9,10) == 9
         True
         """
         if isinstance(other, ElementDeZnZ):
             return (self.rep - other.rep) % self.n == 0
         else:
-            return (self.rep - other) % self.n == 0
+            if not(isinstance(other,int)):
+                return False
+            else:
+                return (self.rep - other) % self.n == 0
 
 
     def __neg__(self):
@@ -563,6 +568,26 @@ class ElementDeZnZ(object):
             a=ElementDeZnZ(p1,p3)
             print(f"{k:3} : {a.rep}×{a.inverse().rep}=1 ({a.n})")
             print(f"           et {a.rep}{strExp(p2)}={a**p2}")
+        
+    def estUnCarre(self):
+        """
+        >>> ElementDeZnZ(2,7).estUnCarre()
+        True
+        >>> ElementDeZnZ(3,7).estUnCarre()
+        False
+        """
+        return (self**(self.n//2)).rep==1
+    
+    def racineCarree(self):
+        """
+        >>> ElementDeZnZ(2,7).racineCarree()
+        ElementDeZnZ(2,7)
+        >>> ElementDeZnZ(3,7).racineCarree()
+        ...
+        AssertionError: 3 n'est pas un carré
+        """
+        assert self.estUnCarre(), (f"{self} n'est pas un carré")
+        return self**(self.n//2+1)
 
 def demoVitesse():
         print("Démo Vitesse")
