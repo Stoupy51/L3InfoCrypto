@@ -83,7 +83,7 @@ if __name__ == "__main__":
  
 	print("\nTest de déchiffrement avec 100 clés aléatoires : ")
 	for i in range(100):
-		ce, cd, cn = ChiffreurRSA.generateKeys(100)
+		ce, cd, cn = ChiffreurRSA.generateKeys(10000)
 		f = ChiffreurRSA(ce, cd, cn)
 		c = f(texte)
 		d = f.binDecode(c)

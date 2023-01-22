@@ -438,19 +438,35 @@ class ElementDeZnZ(object):
         return ElementDeZnZ.__add__(-self, other)
 
 
-    def __pow__(self,q):
-        """
+    def __pow__(self, q):
+        """ Exponentiation rapide / modulaire
         >>> a=ElementDeZnZ(3,10); a**2==-1 and a**1==3 and a**0==1 and a**3==7 and a**4==1
         True
         """
-        return ElementDeZnZ(self.rep ** q, self.n)
+        result = 1
+        base = self.rep
+        power = q
+        while power > 0:
+            if power % 2 == 1:
+                result = (result * base) % self.n
+            base = (base * base) % self.n
+            power = power // 2
+        return ElementDeZnZ(result, self.n)
     
-    def __rpow__(self,q):
-        """
+    def __rpow__(self, q):
+        """ Exponentiation rapide / modulaire
         >>> 3**ElementDeZnZ(2,10)
         ElementDeZnZ(9,10)
         """
-        return ElementDeZnZ(q ** self.rep, self.n)
+        result = 1
+        base = q
+        power = self.rep
+        while power > 0:
+            if power % 2 == 1:
+                result = (result * base) % self.n
+            base = (base * base) % self.n
+            power = power // 2
+        return ElementDeZnZ(result, self.n)
 
 
     def __int__(self):
@@ -570,24 +586,21 @@ class ElementDeZnZ(object):
             print(f"           et {a.rep}{strExp(p2)}={a**p2}")
         
     def estUnCarre(self):
-        """
+        """ Renvoie True si self est un carré dans ZnZ
         >>> ElementDeZnZ(2,7).estUnCarre()
         True
         >>> ElementDeZnZ(3,7).estUnCarre()
         False
         """
-        return (self**(self.n//2)).rep==1
+        return (self**((self.n-1)//2)).rep == 1
     
     def racineCarree(self):
-        """
+        """ Renvoie la racine carrée de self dans ZnZ
         >>> ElementDeZnZ(2,7).racineCarree()
-        ElementDeZnZ(2,7)
-        >>> ElementDeZnZ(3,7).racineCarree()
-        ...
-        AssertionError: 3 n'est pas un carré
+        ElementDeZnZ(4,7)
         """
         assert self.estUnCarre(), (f"{self} n'est pas un carré")
-        return self**(self.n//2+1)
+        return self**((self.n+1)//4)
 
 def demoVitesse():
         print("Démo Vitesse")
