@@ -32,7 +32,7 @@ class Binaire603(list):#Voir Object ?
                     lb.append(Binaire603.dbin[c])
                 else:
                     lb.append(Binaire603.dbin[' '])
-                    print(f"{c=}:{ascii(c)}",end=' | ')
+                    #print(f"{c=}:{ascii(c)}",end=' | ')
             super().__init__(lb)
             #super().__init__( [Binaire603.dbin[c] for c in chaine] )
         else:
@@ -334,6 +334,12 @@ class Binaire603(list):#Voir Object ?
             val+=self[pos]*256**k
             pos+=1
         return val,pos
+    
+    def __hash__(self):
+        r = 0
+        for b in self:
+            r = r * 256 + b
+        return r
 
 
     def demo():
