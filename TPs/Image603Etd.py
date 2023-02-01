@@ -2,6 +2,8 @@
 from PIL import Image  # Simplement pour pouvoir afficher les images
 from Binaire603 import *
 
+class Image603(object):
+    pass
 
 class Image603(object):
     def __init__(self, lg=160, ht=90):
@@ -14,6 +16,15 @@ class Image603(object):
             ]
             for ix in range(lg)
         ]
+    
+    def __eq__(self, img:Image603):
+        if self.lg != img.lg or self.ht != img.ht:
+            return False
+        for ix, iy in self.iterXY():
+            if self.coul[ix][iy] != img.coul[ix][iy]:
+                return False
+        return True
+
 
     def exImage603(num=0, lg=20, ht=20):
         """Renvoie une image lg * ht pixels en exemple avec num :
