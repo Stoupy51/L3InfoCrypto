@@ -5,7 +5,7 @@ from Image603Etd import *
 import Colors
 
 class CompresserSimpleParRepetition(CodeurCA):
-    """"""
+    """ Class CompresserSimpleParRepetition """
     def __init__(self):
         pass
 
@@ -61,7 +61,7 @@ class CompresserSimpleParRepetition(CodeurCA):
             c = compresseur.binCode(imgBinaire)
             d = compresseur.binDecode(c)
             
-            percentage = len(c)/len(imgBinaire)
+            percentage = len(c) / len(imgBinaire)
             print(f"Compression de {len(imgBinaire)} octets en {len(c)} octets soit {percentage:.3%} de la taille originale")
             
             if (imgBinaire == d):

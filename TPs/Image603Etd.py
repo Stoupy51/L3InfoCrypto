@@ -232,8 +232,8 @@ class Image603(object):
 
     def fromBinaire603(monBin):
         "renvoie une image d'après un binaire603 généré par toBinaire603"
-        lg = monBin[0]*256+monBin[1]
-        ht = monBin[2]*256+monBin[3]
+        lg = monBin[0]*256 + monBin[1]
+        ht = monBin[2]*256 + monBin[3]
         img = Image603(lg, ht)
         pos = 4
         for ix, iy in img.iterXY():
