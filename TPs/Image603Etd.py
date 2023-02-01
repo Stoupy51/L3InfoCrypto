@@ -1,17 +1,22 @@
-# Créé par Nous, le 15/11/2021 en Python 3.7
+
 from PIL import Image  # Simplement pour pouvoir afficher les images
 from Binaire603 import *
 
 
 class Image603(object):
-    def __init__(self, lg=200, ht=100):
+    def __init__(self, lg=160, ht=90):
         "Une Image603 contient un tableau de triplet d'octet représentant la couleur de chaque pixel"
         self.lg, self.ht = lg, ht
-        self.coul = [[(ix % 256, iy % 256, (ix*ix+iy*iy) % 256)
-                      for iy in range(ht)] for ix in range(lg)]
+        self.coul = [
+            [
+                (ix % 256, iy % 256, (ix*ix+iy*iy) % 256)
+                for iy in range(ht)
+            ]
+            for ix in range(lg)
+        ]
 
     def exImage603(num=0, lg=20, ht=20):
-        """Renvoie une image lg×ht pixels en exemple avec num :
+        """Renvoie une image lg * ht pixels en exemple avec num :
             0: image standart
             1: image blanche
             2: image ligne et verticales horizontales
@@ -204,13 +209,27 @@ class Image603(object):
 
     def toBinaire603(self):
         "renvoie un binaire603 d'après l'image"
+        monBin = [
+            self.lg & 0xFF00, self.lg & 0x00FF,
+            self.ht & 0xFF00, self.ht & 0x00FF
+        ]
+        for i in self.coul:
+            for r,g,b in i:
+                monBin += [r, g, b]
+        return Binaire603(monBin)
 
-        raise NotImplementedError
 
     def fromBinaire603(monBin):
         "renvoie une image d'après un binaire603 généré par toBinaire603"
+        lg = monBin[0]*256+monBin[1]
+        ht = monBin[2]*256+monBin[3]
+        img = Image603(lg, ht)
+        pos = 4
+        for ix, iy in img.iterXY():
+            img.coul[ix][iy] = (monBin[pos], monBin[pos+1], monBin[pos+2])
+            pos += 3
+        return img
 
-        raise NotImplementedError
 
     def demo():
         im2 = Image603.imgDepuisBmp("Coul10a.bmp", verbose=True)
