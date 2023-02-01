@@ -2,6 +2,7 @@
 from Binaire603 import *
 from CodeurCA import *
 from Image603Etd import *
+import Colors
 
 class CompresserSimpleParRepetition(CodeurCA):
     """"""
@@ -54,22 +55,21 @@ class CompresserSimpleParRepetition(CodeurCA):
         compresseur = CompresserSimpleParRepetition()
         for file in files:
             
-            print(f"\nCompression de {file} :")
+            print(Colors.orange + f"\nCompression de {file} :" + Colors.reset)
             img = Image603.imgDepuisBmp(file, verbose = False)
             imgBinaire = img.toBinaire603()
             c = compresseur.binCode(imgBinaire)
             d = compresseur.binDecode(c)
             
             percentage = len(c)/len(imgBinaire)
-            print(f"Compression : {len(c)} bits")
-            print(f"{len(c)} / {len(imgBinaire)} = {percentage:.3%}")
+            print(f"Compression de {len(imgBinaire)} octets en {len(c)} octets soit {percentage:.3%} de la taille originale")
             
             if (imgBinaire == d):
                 # Print in green
-                print(f"\033[92mCompression réussie\033[0m")
+                print(Colors.green + f"Compression réussie" + Colors.reset)
             else:
                 # Print in red
-                print(f"\033[91mCompression échouée\033[0m")
+                print(Colors.red + f"Compression échouée" + Colors.reset)
         
 
 
