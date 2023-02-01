@@ -101,9 +101,27 @@ class CompresserRLE(CodeurCA):
             else:
                 # Print in red
                 print(Colors.red + f"Compression échouée" + Colors.reset)
-                img.affiche()
-                img2 = Image603.fromBinaire603(d)
-                img2.affiche()
+                #img.affiche()
+                #img2 = Image603.fromBinaire603(d)
+                #img2.affiche()
+        
+        files = ["../BelAmi.TXT", "../Bovary.TXT", "../Germinal.txt", "../Guerre et Paix.txt", "../Les Miserables.txt"]
+        for file in files:
+            
+            print(Colors.orange + f"\nCompression de {file} :" + Colors.reset)
+            texte = Binaire603.bin603DepuisFichier(file)
+            c = compresseur.binCode(texte)
+            d = compresseur.binDecode(c)
+            
+            percentage = len(c) / len(texte)
+            print(f"Compression de {len(texte)} octets en {len(c)} octets soit {percentage:.3%} de la taille originale")
+            
+            if (texte == d):
+                # Print in green
+                print(Colors.green + f"Compression réussie" + Colors.reset)
+            else:
+                # Print in red
+                print(Colors.red + f"Compression échouée" + Colors.reset)
         
 
 
