@@ -92,7 +92,8 @@ def arbreDepuisListe(liste):
         lP = liste
     else:
         lP = listePonderee(liste)
-
+    
+    print(lP)
     ## TODO: Le nouveau doit être ajouté à la fin de la liste mais
     # quand même trié hein, genre un nouveau 2 dans [2, 2, 2] doit être le troisième
     while len(lP) > 1:
