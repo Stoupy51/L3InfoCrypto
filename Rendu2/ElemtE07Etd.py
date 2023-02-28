@@ -82,20 +82,23 @@ class ElemtE07(object):
     def __hash__(self):
         """On fera une fonction injective afin de l'utiliser également dans binCode"""
         if (self.y == "Inf"):
-            return -1
+            return (-1 << 64) + self.p
         else:
-            return (self.x.rep << 64) + (self.y.rep & 0xFFFFFFFFFFFFFFFF)
+            return (self.x.rep << 128) + (self.y.rep << 64) + self.p
 
-    def ElemtE07DepuisHash(h, p):
+    def ElemtE07DepuisHash(h):
         """ Renvoie un ElemtE07 à partir d'un hash
         >>> h = ElemtE07(6,5,11).__hash__()
-        >>> ElemtE07.ElemtE07DepuisHash(h, 11)
+        >>> ElemtE07.ElemtE07DepuisHash(h)
         ElemtE07(6,5,11)
         """
-        if (h == -1):
+        p = h & 0xFFFFFFFFFFFFFFFF
+        y = (h >> 64) & 0xFFFFFFFFFFFFFFFF
+        x = (h >> 128) & 0xFFFFFFFFFFFFFFFF
+        if (y == 0xFFFFFFFFFFFFFFFF):
             return ElemtE07(0, "Inf", p)
         else:
-            return ElemtE07(h >> 64, h & 0xFFFFFFFFFFFFFFFF, p)
+            return ElemtE07(x, y, p)
 
 
     def __str__(self):

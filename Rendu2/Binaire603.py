@@ -1,7 +1,9 @@
+
 from math import log
 from random import randint
 from arithmetiqueDansZ import ElementDeZnZ
 import matplotlib.pyplot as plt
+
 class Binaire603(list):#Voir Object ?
     #list pour transformer un octet en caractère
     lchr=[chr(k) for k in range(256)]
@@ -289,6 +291,29 @@ class Binaire603(list):#Voir Object ?
         plt.bar(lEtiquettes[:nbValMax], lVal[:nbValMax])
         plt.title(titre)
         plt.show()
+    
+    def toNumber(self):
+        """ Renvoie un entier correspondant à la valeur binaire de self
+        >>> Binaire603([0x01,0x02]).toNumber()
+        258
+        """
+        n = 0
+        for oc in self:
+            n = n*256 + oc
+        return n
+    
+    def fromNumber(n):
+        """ Renvoie un Binaire603 correspondant à l'entier n
+        >>> Binaire603.fromNumber(258)
+        Binaire603([ 0x01, 0x02])
+        """
+        b = Binaire603("")
+        while n > 0:
+            b.ajouteOctet(n % 256)
+            n //= 256
+        b.reverse()
+        return b
+        
 
 
 
