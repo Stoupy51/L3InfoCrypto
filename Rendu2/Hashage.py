@@ -60,8 +60,6 @@ class hashNaif(CodeurCA):
 					break
 		return Binaire603(c)
 
-
-
 class hashNaif2(CodeurCA):
 	""" Hashage naif 2 (Deuxième test) """
 
@@ -121,6 +119,54 @@ class hashNaif2(CodeurCA):
 			# On passe au bit suivant
 			i += 1
 		return Binaire603(c)
+
+class hashDaviesMeyer(CodeurCA):
+	""" Hashage de Davies-Meyer """
+	def __init__(self, bits = 32):
+		if (isinstance(bits, hashDaviesMeyer)):
+			self.bits = bits.bits
+			self.bits_int = bits.bits_int
+		else:
+			self.bits = bits
+			self.bits_int = 2 ** bits
+	
+	def binCode(self, monBinD: Binaire603 | str) -> Binaire603:
+		""" Hashage de Davies-Meyer
+		@param monBinD : La chaîne de caractères à hasher
+		@return c (Binaire603) : Le hashage de la chaîne de caractères
+		"""
+		# Conversion de la chaîne de caractères en Binaire603 si ce n'est pas déjà le cas
+		if (isinstance(monBinD, str)):
+			monBinD = Binaire603(monBinD)
+		
+		# Initialisation du tableau de bits
+		c = [ 1 for _ in range(self.bits) ]
+		
+		raise NotImplementedError("Pas encore implémenté")
+
+class hashMiyaguchiPreneel(CodeurCA):
+	""" Hashage de Miyaguchi-Preneel """
+	def __init__(self, bits = 32):
+		if (isinstance(bits, hashMiyaguchiPreneel)):
+			self.bits = bits.bits
+			self.bits_int = bits.bits_int
+		else:
+			self.bits = bits
+			self.bits_int = 2 ** bits
+	
+	def binCode(self, monBinD: Binaire603 | str) -> Binaire603:
+		""" Hashage de Miyaguchi-Preneel
+		@param monBinD : La chaîne de caractères à hasher
+		@return c (Binaire603) : Le hashage de la chaîne de caractères
+		"""
+		# Conversion de la chaîne de caractères en Binaire603 si ce n'est pas déjà le cas
+		if (isinstance(monBinD, str)):
+			monBinD = Binaire603(monBinD)
+		
+		# Initialisation du tableau de bits
+		c = [ 1 for _ in range(self.bits) ]
+		
+		raise NotImplementedError("Pas encore implémenté")
 
 
 

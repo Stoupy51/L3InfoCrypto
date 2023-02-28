@@ -227,8 +227,8 @@ class Binaire603(list):#Voir Object ?
         >>> lf[3]
         0.4
         """
-        lf=[0]*256
-        n=len(self )
+        lf = [0]*256
+        n = len(self)
         for oc in self:
             lf[oc]+=1/n
         return lf
@@ -360,8 +360,8 @@ class Binaire603(list):#Voir Object ?
             print("Bin:",repr(monBin))
             monBin.affFreq()
     def demoLivres():
-        for nf in ["Les Miserables","Notre Dame de Paris","L Education sentimentale","Guerre et Paix"]:
-            lb=Binaire603.bin603DepuisFichier(nf+".TXT")
+        for nf in ["Notre Dame de Paris","L Education sentimentale","Guerre et Paix"]:
+            lb=Binaire603.bin603DepuisFichier("../" + nf + ".TXT")
             lb.afficheHistogrammeDesFrequences(titre="Fréquence des lettres dans "+nf)
 if __name__ == "__main__":
     import doctest
