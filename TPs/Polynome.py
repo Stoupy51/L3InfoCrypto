@@ -141,6 +141,48 @@ class Polynome(object):
         """
         return Polynome.__add__(-self, other)
 
+    def __mul__(self,other):
+        """
+        
+        """
+        polynome = Polynome()
+        
+        # On verifie que l'objet est bien un polynome
+        if isinstance(other, Polynome) :
+            # TODO
+            return polynome
+
+    def __rmul__(self,other):
+        """
+        
+        """
+        return Polynome.__mul__(self, other)
+    
+    def __eq__(self, other):
+        """
+        >> Polynome(ElementDeZnZ(1,4),2) == Polynome(ElementDeZnZ(1,4),2)
+        True
+        """
+        if isinstance(other, ElementDeZnZ):
+            return self.listPolynome == other.listPolynome # TODO à revoir
+        
+        return False
+    
+    def __div__(self, other):
+        return self.__floordiv__(other)
+
+    def __floordiv__(self,other):
+        """
+        
+        """
+        polynome = Polynome()
+        
+        # On verifie que l'objet est bien un polynome
+        if isinstance(other, Polynome) :
+            # TODO
+            return polynome
+        
+        raise TypeError("L'objet n'est pas un polynome")
     
 if __name__ == "__main__":
     import doctest
