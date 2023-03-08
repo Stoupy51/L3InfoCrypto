@@ -621,6 +621,8 @@ def demoVitesse():
             b=ElementDeZnZ(10**int(p*3/10),n)
             print(f"{p}: 2{strExp(ElementDeZnZ(2,n).logDiscret(b))}=={b}")
 
+ElmtZnZ = ElementDeZnZ
+
 if __name__ == "__main__":
     import doctest
     doctest.testmod()
@@ -628,3 +630,4 @@ if __name__ == "__main__":
     #demoVitesse()
     #ElementDeZnZ.demo1()
     #ElementDeZnZ(8,60).demoDiv()
+
