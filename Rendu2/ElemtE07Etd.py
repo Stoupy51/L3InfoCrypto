@@ -19,7 +19,7 @@ class ElemtE07(object):
         Celui de y doit être le même que celui de x.
         L'élément neutre est défini par self.y == "Inf"
 
-        >>> ElemtE07(ElementDeZnZ(7,11),ElementDeZnZ(8,11))
+        >>> ElemtE07(ElmtZnZ(7,11),ElmtZnZ(8,11))
         ElemtE07(7,8,11)
         >>> ElemtE07(1,"Inf",11)
         ElemtE07(1,"Inf",11)
@@ -30,21 +30,21 @@ class ElemtE07(object):
             self.y = x.y
             self.p = x.p
         else:
-            # On copie les paramètres de x si il est un ElementDeZnZ
-            if (isinstance(x, ElementDeZnZ)):
+            # On copie les paramètres de x si il est un ElmtZnZ
+            if (isinstance(x, ElmtZnZ)):
                 self.x = x
                 if (y == "Inf"):
                     self.y = y
                 else:
-                    self.y = ElementDeZnZ(y, x.n)
+                    self.y = ElmtZnZ(y, x.n)
                 self.p = x.n
-            # Sinon on crée des ElementDeZnZ à partir des paramètres
+            # Sinon on crée des ElmtZnZ à partir des paramètres
             else:
-                self.x = ElementDeZnZ(x, p)
+                self.x = ElmtZnZ(x, p)
                 if (y == "Inf"):
                     self.y = y
                 else:
-                    self.y = ElementDeZnZ(y, p)
+                    self.y = ElmtZnZ(y, p)
                 self.p = p
             
 			# On vérifie que p est premier et que l'élément est bien sur la courbe
@@ -103,7 +103,7 @@ class ElemtE07(object):
 
     def __str__(self):
         """
-        >>> print(ElemtE07(ElementDeZnZ(3,47),ElementDeZnZ(9,47)))
+        >>> print(ElemtE07(ElmtZnZ(3,47),ElmtZnZ(9,47)))
         (3,9)[47]
         """
         return f"({self.x.rep},{self.y.rep})[{self.p}]"
@@ -193,8 +193,8 @@ class ElemtE07(object):
 
     def __rmul__(self, k):
         """
-        >>> 2 * ElementDeZnZ(3,10)
-        ElementDeZnZ(6,10)
+        >>> 2 * ElmtZnZ(3,10)
+        ElmtZnZ(6,10)
         >>> 2 * (ElemtE07(3,"Inf",47) + 3*ElemtE07(3,9,47)) + ElemtE07(3,"Inf",47)
         ElemtE07(43,32,47)
         """
@@ -292,13 +292,13 @@ class ElemtE07(object):
         return [e for e in ElemtE07.lDesElements(p) if estPremier(e.ordrePoint())]
 
 
-    def elemtE07APartirDeX(x:ElementDeZnZ):
+    def elemtE07APartirDeX(x:ElmtZnZ):
         """
         Renvoie un point avec x ou une valeur proche de x comme abscisse
-        >>> ElemtE07.elemtE07APartirDeX(ElementDeZnZ(2,11))
+        >>> ElemtE07.elemtE07APartirDeX(ElmtZnZ(2,11))
         ElemtE07(2,9,11)
         """
-        xx,p=ElementDeZnZ(x),x.n
+        xx,p=ElmtZnZ(x),x.n
         assert p%2==1
         y2=xx**3+7
         while not(y2.estUnCarre()):  #yy est une racine carré
@@ -310,7 +310,7 @@ class ElemtE07(object):
 
     def randElemtE07(p):
         """Renvoie un élément non nul au hasard"""
-        return ElemtE07.elemtE07APartirDeX(ElementDeZnZ(randint(0,p-1),p))
+        return ElemtE07.elemtE07APartirDeX(ElmtZnZ(randint(0,p-1),p))
 
 
     def randGenerateurE07(p=47):
@@ -405,7 +405,7 @@ class ElemtE07(object):
 
 
     def afficheClesPourCodage(p=65537,essaiCle=12345):
-        x=ElementDeZnZ(essaiCle,p)
+        x=ElmtZnZ(essaiCle,p)
         M=ElemtE07.elemtE07APartirDeX(x)
         print(M)
         e=ElemtE07.randElemtE07(p)

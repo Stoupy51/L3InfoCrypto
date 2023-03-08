@@ -1,6 +1,6 @@
 from math import log
 from random import randint
-from arithmetiqueDansZ import ElementDeZnZ
+from arithmetiqueDansZ import ElmtZnZ
 import matplotlib.pyplot as plt
 class Binaire603(list):#Voir Object ?
     #list pour transformer un octet en caractère
@@ -16,9 +16,9 @@ class Binaire603(list):#Voir Object ?
     def __init__(self,param):
         """lbin est une liste ne contenant que :
             des entiers de [0..255] qui sont donc assumés comme des octets"
-        ou bien une liste de ElementDeZnZ(..,256)
+        ou bien une liste de ElmtZnZ(..,256)
         lbin peut aussi être une chaine de caractère
-        >>> Binaire603([ElementDeZnZ(2,256),3])
+        >>> Binaire603([ElmtZnZ(2,256),3])
         Binaire603([ 0x02, 0x03])
         >>> Binaire603("Trop tôt !")
         Binaire603([ 0x54, 0x72, 0x6f, 0x70, 0x20, 0x74, 0xf4, 0x74, 0x20, 0x21])
@@ -123,7 +123,7 @@ class Binaire603(list):#Voir Object ?
         True
         """
         res=False
-        if isinstance(val, ElementDeZnZ) and val.n==256:
+        if isinstance(val, ElmtZnZ) and val.n==256:
             res=True
 
         elif isinstance(val,int) and val>=0 and val <=255:
@@ -168,12 +168,12 @@ class Binaire603(list):#Voir Object ?
             """
             >>> octetStr(12)
             0x0c
-            >>> octetStr(ElementDeZnZ(17,256))
+            >>> octetStr(ElmtZnZ(17,256))
             0x11
 
             """
 
-            if isinstance(oc,ElementDeZnZ):
+            if isinstance(oc,ElmtZnZ):
                 val=oc.rep
             else:
                 val=oc
@@ -194,7 +194,7 @@ class Binaire603(list):#Voir Object ?
         sous la forme d'un appel à son constructeur ex: Binaire603([ 0x57, 0x26, 0xfd]) """
         s="Binaire603(["
         for oc in self:
-            if isinstance(oc, ElementDeZnZ):
+            if isinstance(oc, ElmtZnZ):
                 s+=" "+oc.__repr__()+","
             else:
                 s+=" "+f"0x{oc:02x}," # https://docs.python.org/fr/3/library/string.html
@@ -203,7 +203,7 @@ class Binaire603(list):#Voir Object ?
         """Renvoie True lorsque les octets sont égaux deux à deux
         >>> Binaire603([ 0xcb, 0xba])==Binaire603([ 0xcb, 0xba])
         True
-        >>> Binaire603([ ElementDeZnZ(1,256), ElementDeZnZ(2,256)])==Binaire603([1,2])
+        >>> Binaire603([ ElmtZnZ(1,256), ElmtZnZ(2,256)])==Binaire603([1,2])
         True
         >>> Binaire603([ 0xcb, 0xba])==Binaire603([ 0xcb])
         False

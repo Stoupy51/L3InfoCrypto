@@ -26,7 +26,7 @@ def estPremierOuPseudoPremierDansLaBase(n, a):
 		t //= 2
 		s += 1
 	
-	b = ElementDeZnZ(a ** t, n)
+	b = ElmtZnZ(a ** t, n)
 	if b == 1:
 		return True
 

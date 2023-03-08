@@ -54,7 +54,7 @@ class PolF2(object):
 		self.isMonome = (compteur == 1)
 		
 		# Erreur si la liste est vide
-		assert len(self.data) > 0 (f"Erreur : la liste passée en paramètre est vide")
+		assert len(self.data) > 0, (f"Erreur : la liste passée en paramètre est vide")
 	
 	@staticmethod
 	def monome(i):
@@ -191,5 +191,33 @@ class PolF2(object):
 		return retour
 
 	def __str__(self):
-		arithmetiqueDansZ.strExp()
+		""" Conversion en chaîne de caractères
+		>>> str(PolF2([ElmtZnZ(1,2), ElmtZnZ(0,2), ElmtZnZ(1,2)]))
+		'1 + x²
+		"""
+		# Initialisation de la chaîne de caractères
+		retour = ""
+
+		# Pour chaque élément de la liste
+		for i in range(self.degre() + 1):
+			# Si l'élément est à 1, on l'ajoute à la chaîne de caractères avec le bon exposant
+			if self.data[i].rep == 1:
+				if i == 0:
+					retour += "1 + "
+				else:
+					retour += "x" + strExp(i) + " + "
+		if retour == "":
+			return "0"
+		else:
+			# On retourne la chaîne de caractères sans le dernier " + "
+			return retour[:-3]
+
+	def __repr__(self):
+		""" Représentation de l'objet """
+		return f"PolF2({self.data})"
+
+
+if __name__ == "__main__":
+	import doctest
+	doctest.testmod()
 

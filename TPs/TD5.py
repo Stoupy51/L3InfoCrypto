@@ -49,7 +49,7 @@ class hashNaif(CodeurCA):
 			customSeed += b * mult
 			mult *= 256
 		c = [ 1 for _ in range(self.bits) ]
-		p = ElementDeZnZ(1, self.bits_int)
+		p = ElmtZnZ(1, self.bits_int)
 		i = 0
 		while i < self.bits:
 			for byte in monBinD:
@@ -83,13 +83,13 @@ class hashNaif2(CodeurCA):
 			mult *= 256
 		c = [ 1 for _ in range(self.bits) ]
 		i = 0
-		paquet1 = ElementDeZnZ(7, self.bits_int)
-		paquet2 = ElementDeZnZ(41, self.bits_int)
+		paquet1 = ElmtZnZ(7, self.bits_int)
+		paquet2 = ElmtZnZ(41, self.bits_int)
 		while i < self.bits:
 			for byte in monBinD:
 				paquet1 = paquet1 * (byte * 7 + (564154587867 ^ paquet2.rep) - customSeed)
 				paquet2 = byte * (customSeed - paquet1)
-				paquet1, paquet2 = ElementDeZnZ(paquet2.rep ^ (customSeed * paquet1.rep), self.bits_int), paquet1
+				paquet1, paquet2 = ElmtZnZ(paquet2.rep ^ (customSeed * paquet1.rep), self.bits_int), paquet1
 				c[i] = (paquet1.rep // ((paquet2.rep >> 8) + 1) * customSeed // ((61 ^ paquet2.rep) + 1)) % 256
 				i += 1
 				if i >= self.bits:

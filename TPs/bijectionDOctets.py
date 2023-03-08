@@ -62,7 +62,7 @@ class fAffine(fBijOctetsCA):
          >>> fAffine().valInv(fAffine()(123))
          123
          """
-         am1=ElementDeZnZ(self.a,256).inverse().rep
+         am1=ElmtZnZ(self.a,256).inverse().rep
          return ((octetC-self.b)*am1)%256
 
 class fMasque(fBijOctetsCA):

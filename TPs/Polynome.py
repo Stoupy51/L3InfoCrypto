@@ -3,12 +3,12 @@ from arithmetiqueDansZ import *
 class Polynome(object):
     "Polynome"
     
-    def __init__(self, coeff = ElementDeZnZ(1,2), expo = 1):
+    def __init__(self, coeff = ElmtZnZ(1,2), expo = 1):
         """
-        >>> Polynome(ElementDeZnZ(1,2),2)
-        Polynome(ElementDeZnZ(1,2),2)
-        >>> Polynome(Polynome(ElementDeZnZ(1,2),10))
-        Polynome(ElementDeZnZ(1,2),10)
+        >>> Polynome(ElmtZnZ(1,2),2)
+        Polynome(ElmtZnZ(1,2),2)
+        >>> Polynome(Polynome(ElmtZnZ(1,2),10))
+        Polynome(ElmtZnZ(1,2),10)
         """
         
         if (isinstance(coeff, Polynome)) :
@@ -21,7 +21,7 @@ class Polynome(object):
         
     def __str__(self):
         """
-        >>> print(ElementDeZnZ(1,2),2)
+        >>> print(ElmtZnZ(1,2),2)
         x^2
         """
         
@@ -54,17 +54,17 @@ class Polynome(object):
     
     def __repr__(self):
         """
-        >>> Polynome(ElementDeZnZ(1,2),2)
-        Polynome({(ElementDeZnZ(1,2),2)})
+        >>> Polynome(ElmtZnZ(1,2),2)
+        Polynome({(ElmtZnZ(1,2),2)})
         """
         return f"Polynome({self.listPolynome})"
     
     def __add__(self,other):
         """
-        >>> Polynome(ElementDeZnZ(1,4),2) + Polynome(ElementDeZnZ(1,4),2)
-        Polynome({(ElementDeZnZ(2,4),2)})
-        >>> Polynome(ElementDeZnZ(1,2),2) + Polynome(ElementDeZnZ(1,4),3)
-        Polynome({(ElementDeZnZ(1,2),2), (ElementDeZnZ(1,4),3)})
+        >>> Polynome(ElmtZnZ(1,4),2) + Polynome(ElmtZnZ(1,4),2)
+        Polynome({(ElmtZnZ(2,4),2)})
+        >>> Polynome(ElmtZnZ(1,2),2) + Polynome(ElmtZnZ(1,4),3)
+        Polynome({(ElmtZnZ(1,2),2), (ElmtZnZ(1,4),3)})
         """
         # copie du polynome courant
         polynome = Polynome(self.listPolynome)
@@ -103,17 +103,17 @@ class Polynome(object):
 
     def __radd__(self,other):
         """
-        >>> Polynome(ElementDeZnZ(1,4),2) + Polynome(ElementDeZnZ(1,4),2)
-        Polynome({(ElementDeZnZ(2,4),2)})
-        >>> Polynome(ElementDeZnZ(1,2),2) + Polynome(ElementDeZnZ(1,4),3)
-        Polynome({(ElementDeZnZ(1,2),2), (ElementDeZnZ(1,4),3)})
+        >>> Polynome(ElmtZnZ(1,4),2) + Polynome(ElmtZnZ(1,4),2)
+        Polynome({(ElmtZnZ(2,4),2)})
+        >>> Polynome(ElmtZnZ(1,2),2) + Polynome(ElmtZnZ(1,4),3)
+        Polynome({(ElmtZnZ(1,2),2), (ElmtZnZ(1,4),3)})
         """
         return Polynome.__add__(self, other)
     
     def __neg__(self):
         """
-        >>> -Polynome(ElementDeZnZ(1,4),2)
-        Polynome({(ElementDeZnZ(3,4),2)})
+        >>> -Polynome(ElmtZnZ(1,4),2)
+        Polynome({(ElmtZnZ(3,4),2)})
         """
         # copie du polynome courant
         polynome = Polynome(self.listPolynome)
@@ -129,14 +129,14 @@ class Polynome(object):
     
     def __sub__(self,other):
         """
-        >>> Polynome(ElementDeZnZ(1,4),2) - Polynome(ElementDeZnZ(1,4),2)
+        >>> Polynome(ElmtZnZ(1,4),2) - Polynome(ElmtZnZ(1,4),2)
         Polynome(set())
         """
         return Polynome.__add__(self, -other)
 
     def __rsub__(self,other):
         """
-        >>> Polynome(ElementDeZnZ(1,4),2) - Polynome(ElementDeZnZ(1,4),2)
+        >>> Polynome(ElmtZnZ(1,4),2) - Polynome(ElmtZnZ(1,4),2)
         Polynome(set())
         """
         return Polynome.__add__(-self, other)
@@ -160,10 +160,10 @@ class Polynome(object):
     
     def __eq__(self, other):
         """
-        >> Polynome(ElementDeZnZ(1,4),2) == Polynome(ElementDeZnZ(1,4),2)
+        >> Polynome(ElmtZnZ(1,4),2) == Polynome(ElmtZnZ(1,4),2)
         True
         """
-        if isinstance(other, ElementDeZnZ):
+        if isinstance(other, ElmtZnZ):
             return self.listPolynome == other.listPolynome # TODO à revoir
         
         return False

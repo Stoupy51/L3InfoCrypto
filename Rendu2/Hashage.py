@@ -49,7 +49,7 @@ class hashNaif(CodeurCA):
 			customSeed += b * mult
 			mult *= 256
 		c = [ 1 for _ in range(self.bits) ]
-		p = ElementDeZnZ(1, self.bits_int)
+		p = ElmtZnZ(1, self.bits_int)
 		i = 0
 		while i < self.bits:
 			for byte in monBinD:
@@ -98,8 +98,8 @@ class hashNaif2(CodeurCA):
 		
 		# Initialisation du tableau de bits et des variables paquet1 et paquet2
 		c = [ 1 for _ in range(self.bits) ]
-		paquet1 = ElementDeZnZ(7, self.bits_int)
-		paquet2 = ElementDeZnZ(41, self.bits_int)
+		paquet1 = ElmtZnZ(7, self.bits_int)
+		paquet2 = ElmtZnZ(41, self.bits_int)
 
 		# Parcours de la chaîne de caractères à hasher (pour chaque bit du tableau de bits)
 		i = 0
@@ -110,7 +110,7 @@ class hashNaif2(CodeurCA):
 				paquet2 = byte * (customSeed - paquet1)
 
 				# Inversion de paquet1 et paquet2 tout en application d'une formule magique à paquet1
-				paquet1, paquet2 = ElementDeZnZ(paquet2.rep ^ (customSeed * paquet1.rep), self.bits_int), paquet1
+				paquet1, paquet2 = ElmtZnZ(paquet2.rep ^ (customSeed * paquet1.rep), self.bits_int), paquet1
 
 				# Ajout du résultat de la multiplication de paquet1 et paquet2 modulo 2^bits au tableau de bits
 				# tout en appliquant une autre formule magique à ce résultat le tout modulo 256

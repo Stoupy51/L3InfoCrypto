@@ -15,8 +15,8 @@ class ChiffreurRSA(CodeurCA):
 			self.d = e.d
 			self.n = e.n
 		else:
-			self.e = ElementDeZnZ(e, n)
-			self.d = ElementDeZnZ(d, n)
+			self.e = ElmtZnZ(e, n)
+			self.d = ElmtZnZ(d, n)
 			self.n = n
 	
 	def generateKeys(maxPrime = 100):
@@ -33,7 +33,7 @@ class ChiffreurRSA(CodeurCA):
 		while (e > phi or d > phi):
 			while (e == p or e == q or e > phi or sontPremiers(e, phi) != 1):
 				e = tp_primes.p[randint(0, maxPrime)]
-			d = ElementDeZnZ(e, phi).inverse().rep
+			d = ElmtZnZ(e, phi).inverse().rep
 		#print(f"p = {p}, q = {q}, n = {n}, phi = {phi}, e = {e}, d = {d}")
 		return (e, d, n)
 

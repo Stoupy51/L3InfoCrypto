@@ -12,8 +12,8 @@ class ChiffreurAffine(CodeurCA):
         if isinstance(a, ChiffreurAffine):
             self.b = a.b
         else:
-            self.a = ElementDeZnZ(a, 256)
-            self.b = ElementDeZnZ(b, 256)
+            self.a = ElmtZnZ(a, 256)
+            self.b = ElmtZnZ(b, 256)
             self.a_inv = self.a.inverse()
 
     def __str__(self):

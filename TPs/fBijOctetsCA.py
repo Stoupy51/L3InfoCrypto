@@ -8,7 +8,7 @@ from arithmetiqueDansZ import *
 
 class fBijParDecalage(object):    
     def __init__(self, decal):
-        self.decal = ElementDeZnZ(decal, 256)
+        self.decal = ElmtZnZ(decal, 256)
 
     def __repr__(self):
         return f"fBijParDecalage({self.decal})"
@@ -22,8 +22,8 @@ class fBijParDecalage(object):
 
 class fBijAffine(object):    
     def __init__(self, a, b):
-        self.a = ElementDeZnZ(a, 256)
-        self.b = ElementDeZnZ(b, 256)
+        self.a = ElmtZnZ(a, 256)
+        self.b = ElmtZnZ(b, 256)
         self.a_inv = self.a.inverse()
 
     def __repr__(self):

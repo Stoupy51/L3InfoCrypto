@@ -292,17 +292,17 @@ def lDecompoPGCDetPPCM(a,b):
 
 
 #Les méthodes magiques : https://blog.finxter.com/python-dunder-methods-cheat-sheet/
-class ElementDeZnZ(object):
+class ElmtZnZ(object):
     "Elément de Z/nZ"
     
     def __init__(self,val,n=256):
         """
-        >>> ElementDeZnZ(-1,10)
-        ElementDeZnZ(9,10)
-        >>> ElementDeZnZ(ElementDeZnZ(9,10))
-        ElementDeZnZ(9,10)
+        >>> ElmtZnZ(-1,10)
+        ElmtZnZ(9,10)
+        >>> ElmtZnZ(ElmtZnZ(9,10))
+        ElmtZnZ(9,10)
         """
-        if isinstance(val, ElementDeZnZ):
+        if isinstance(val, ElmtZnZ):
             self.rep = val.rep
             self.n = val.n
         else:
@@ -312,7 +312,7 @@ class ElementDeZnZ(object):
 
     def __str__(self):
         """
-        >>> print(ElementDeZnZ(-1,5))
+        >>> print(ElmtZnZ(-1,5))
         4[5]
         """
         return f"{self.rep}[{self.n}]"
@@ -320,52 +320,52 @@ class ElementDeZnZ(object):
 
     def __repr__(self):
         """
-        >>> ElementDeZnZ(-1,5)
-        ElementDeZnZ(4,5)
+        >>> ElmtZnZ(-1,5)
+        ElmtZnZ(4,5)
         """
-        return f"ElementDeZnZ({self.rep},{self.n})"
+        return f"ElmtZnZ({self.rep},{self.n})"
 
 
     def __add__(self,other):
         """
-        >>> ElementDeZnZ(2,10)+ElementDeZnZ(3,10)
-        ElementDeZnZ(5,10)
-        >>> ElementDeZnZ(2,10)+3
-        ElementDeZnZ(5,10)
+        >>> ElmtZnZ(2,10)+ElmtZnZ(3,10)
+        ElmtZnZ(5,10)
+        >>> ElmtZnZ(2,10)+3
+        ElmtZnZ(5,10)
         """
-        if isinstance(other, ElementDeZnZ):        
-            return ElementDeZnZ(self.rep + other.rep, self.n)
+        if isinstance(other, ElmtZnZ):        
+            return ElmtZnZ(self.rep + other.rep, self.n)
         else:
-            return ElementDeZnZ(self.rep + other, self.n)
+            return ElmtZnZ(self.rep + other, self.n)
 
 
     def __radd__(self,other):
         """
-        >>> 2+ElementDeZnZ(3,10)
-        ElementDeZnZ(5,10)
+        >>> 2+ElmtZnZ(3,10)
+        ElmtZnZ(5,10)
         """
-        return ElementDeZnZ.__add__(self, other)
+        return ElmtZnZ.__add__(self, other)
 
 
     def __mul__(self,other):
         """
-        >>> ElementDeZnZ(2,10)*ElementDeZnZ(3,10)
-        ElementDeZnZ(6,10)
-        >>> ElementDeZnZ(2,10)*3
-        ElementDeZnZ(6,10)
+        >>> ElmtZnZ(2,10)*ElmtZnZ(3,10)
+        ElmtZnZ(6,10)
+        >>> ElmtZnZ(2,10)*3
+        ElmtZnZ(6,10)
         """
-        if isinstance(other, ElementDeZnZ):
-            return ElementDeZnZ(self.rep * other.rep, self.n)
+        if isinstance(other, ElmtZnZ):
+            return ElmtZnZ(self.rep * other.rep, self.n)
         else:
-            return ElementDeZnZ(self.rep * other, self.n)
+            return ElmtZnZ(self.rep * other, self.n)
 
 
     def __rmul__(self,other):
         """
-        >>> 2*ElementDeZnZ(3,10)
-        ElementDeZnZ(6,10)
+        >>> 2*ElmtZnZ(3,10)
+        ElmtZnZ(6,10)
         """
-        return ElementDeZnZ.__mul__(self, other)
+        return ElmtZnZ.__mul__(self, other)
 
     def __div__(self, other):
         return self.__floordiv__(other)
@@ -373,33 +373,33 @@ class ElementDeZnZ(object):
     def __floordiv__(self,other):
         """
         Opération inverse de la multiplication :
-        ElementDeZnZ(4,10)//ElementDeZnZ(5,10) doit renvoyer une erreur
+        ElmtZnZ(4,10)//ElmtZnZ(5,10) doit renvoyer une erreur
         
-        >>> ElementDeZnZ(9,10)//ElementDeZnZ(3,10)
-        ElementDeZnZ(3,10)
-        >>> ElementDeZnZ(1,10)//ElementDeZnZ(3,10)
-        ElementDeZnZ(7,10)
+        >>> ElmtZnZ(9,10)//ElmtZnZ(3,10)
+        ElmtZnZ(3,10)
+        >>> ElmtZnZ(1,10)//ElmtZnZ(3,10)
+        ElmtZnZ(7,10)
         """
-        if isinstance(other,ElementDeZnZ):
+        if isinstance(other,ElmtZnZ):
             b=other.rep
         else:
             b=other
         u,v,d=bezout(b,self.n)
         ch=f"Il n'existe pas de dividende de {b} par {self}"
         assert self.rep %d ==0,ch
-        return ElementDeZnZ(u*(self.rep//d),self.n)
+        return ElmtZnZ(u*(self.rep//d),self.n)
 
 
     def __eq__(self, other):
         """
-        >>> ElementDeZnZ(9,10) == ElementDeZnZ(-1,10)
+        >>> ElmtZnZ(9,10) == ElmtZnZ(-1,10)
         True
-        >>> ElementDeZnZ(9,10) == ElementDeZnZ(1,10)
+        >>> ElmtZnZ(9,10) == ElmtZnZ(1,10)
         False
-        >>> ElementDeZnZ(9,10) == 9
+        >>> ElmtZnZ(9,10) == 9
         True
         """
-        if isinstance(other, ElementDeZnZ):
+        if isinstance(other, ElmtZnZ):
             return (self.rep - other.rep) % self.n == 0
         else:
             if not(isinstance(other,int)):
@@ -410,37 +410,37 @@ class ElementDeZnZ(object):
 
     def __neg__(self):
         """
-        >>> -ElementDeZnZ(9,10)==ElementDeZnZ(1,10)
+        >>> -ElmtZnZ(9,10)==ElmtZnZ(1,10)
         True
-        >>> -ElementDeZnZ(9,10)==2
+        >>> -ElmtZnZ(9,10)==2
         False
-        >>> -ElementDeZnZ(9,10)==1
+        >>> -ElmtZnZ(9,10)==1
         True
         """
-        return ElementDeZnZ(-self.rep, self.n)
+        return ElmtZnZ(-self.rep, self.n)
 
 
     def __sub__(self,other):
         """
-        >>> a4=ElementDeZnZ(-1,5);a1=ElementDeZnZ(1,5);a1+a4==0
+        >>> a4=ElmtZnZ(-1,5);a1=ElmtZnZ(1,5);a1+a4==0
         True
         >>> (-a4+a4==0) and (a4//4==1) and (4*a1+(-a1*4)==0)
         True
         """
-        return ElementDeZnZ.__add__(self, -other)
+        return ElmtZnZ.__add__(self, -other)
 
 
     def __rsub__(self,other):
         """
-        >>> 4-ElementDeZnZ(3,5)
-        ElementDeZnZ(1,5)
+        >>> 4-ElmtZnZ(3,5)
+        ElmtZnZ(1,5)
         """
-        return ElementDeZnZ.__add__(-self, other)
+        return ElmtZnZ.__add__(-self, other)
 
 
     def __pow__(self, q):
         """ Exponentiation rapide / modulaire
-        >>> a=ElementDeZnZ(3,10); a**2==-1 and a**1==3 and a**0==1 and a**3==7 and a**4==1
+        >>> a=ElmtZnZ(3,10); a**2==-1 and a**1==3 and a**0==1 and a**3==7 and a**4==1
         True
         """
         # Cas particulier de la puissance négative :
@@ -457,12 +457,12 @@ class ElementDeZnZ(object):
                 result = (result * base) % self.n
             base = (base * base) % self.n
             power = power // 2
-        return ElementDeZnZ(result, self.n)
+        return ElmtZnZ(result, self.n)
     
     def __rpow__(self, q):
         """ Exponentiation rapide / modulaire
-        >>> 3**ElementDeZnZ(2,10)
-        ElementDeZnZ(9,10)
+        >>> 3**ElmtZnZ(2,10)
+        ElmtZnZ(9,10)
         """
         result = 1
         base = q
@@ -472,12 +472,12 @@ class ElementDeZnZ(object):
                 result = (result * base) % self.n
             base = (base * base) % self.n
             power = power // 2
-        return ElementDeZnZ(result, self.n)
+        return ElmtZnZ(result, self.n)
 
 
     def __int__(self):
         """
-        >>> int(ElementDeZnZ(3,10))
+        >>> int(ElmtZnZ(3,10))
         3
         """
         return self.rep
@@ -488,9 +488,9 @@ class ElementDeZnZ(object):
         Voir http://www.repcrypta.com/telechargements/fichecrypto_107.pdf
         Retourne la puissance à partir de laquelle il est égal
         
-        >>> (ElementDeZnZ(2,7)).ordre()
+        >>> (ElmtZnZ(2,7)).ordre()
         3
-        >>> (ElementDeZnZ(-2,7)).ordre()
+        >>> (ElmtZnZ(-2,7)).ordre()
         6
         """
         a = self * self.rep
@@ -504,8 +504,8 @@ class ElementDeZnZ(object):
     def elementPrimitif(self):
         """Renvoie le premier élément primitif (d'ordre n-1) de Z/nZ suivant self
         
-        >>> ElementDeZnZ(2,7).elementPrimitif()
-        ElementDeZnZ(3,7)
+        >>> ElmtZnZ(2,7).elementPrimitif()
+        ElmtZnZ(3,7)
         """
         res=self+1
         while res.ordre()!=self.n-1:
@@ -520,9 +520,9 @@ class ElementDeZnZ(object):
     def estInversible(self):
         """Il est inversible si son PGCD avec son modulo == 1
         
-        >>> ElementDeZnZ(3,5).estInversible()
+        >>> ElmtZnZ(3,5).estInversible()
         True
-        >>> ElementDeZnZ(10,12).estInversible()
+        >>> ElmtZnZ(10,12).estInversible()
         False
         """
         return PGCD(self.rep, self.n) == 1
@@ -530,24 +530,24 @@ class ElementDeZnZ(object):
 
     def inverse(self):
         """
-        ElementDeZnZ(2,10).inverse() doit renvoyer une erreur
-        >>> ElementDeZnZ(3,5).inverse()==2
+        ElmtZnZ(2,10).inverse() doit renvoyer une erreur
+        >>> ElmtZnZ(3,5).inverse()==2
         True
 
         """
         u,_,d = bezout(self.rep,self.n)
         assert d == 1,f"{self} n'est pas inversible !"
         #a et n premiers entre eux
-        return ElementDeZnZ(u,self.n)     #a.u=1(n)
+        return ElmtZnZ(u,self.n)     #a.u=1(n)
     
     
     def logDiscret(self,b):
         """Renvoie x tel que ( self.rep**x == b[self.n] )
         n doit être premier pour garantir l'existence
         
-        >>> ElementDeZnZ(2,13).logDiscret(8)
+        >>> ElmtZnZ(2,13).logDiscret(8)
         3
-        >>> ElementDeZnZ(2,13).logDiscret(3)
+        >>> ElmtZnZ(2,13).logDiscret(3)
         4
         """
         x = 2
@@ -562,17 +562,17 @@ class ElementDeZnZ(object):
     def valThChinois(self,other):
         """
         Renvoie c(pq) avec a(p) et b(q) tel que x≡a(p) et x≡b(q) <=>x≡c(p.q)$
-        >>> ElementDeZnZ(2,7).valThChinois(ElementDeZnZ(3,10))
-        ElementDeZnZ(23,70)
+        >>> ElmtZnZ(2,7).valThChinois(ElmtZnZ(3,10))
+        ElmtZnZ(23,70)
         """
         assert PGCD(self.n,other.n)==1,"p et q ne sont pas premiers entre eux"
         u,v,d=bezout(self.n,other.n)
-        return ElementDeZnZ( other.rep*self.n*u + self.rep*other.n*v, self.n*other.n)
+        return ElmtZnZ( other.rep*self.n*u + self.rep*other.n*v, self.n*other.n)
     
     
     def demoDiv(self):
         for k in range(1,self.n):
-            a=ElementDeZnZ(k,self.n)
+            a=ElmtZnZ(k,self.n)
             try :
                 ch=f"{a.rep}×{a.inverse().rep}=1 ({a.n})"
             except :
@@ -587,23 +587,23 @@ class ElementDeZnZ(object):
     def demo1():
         for k in range(10,12):
             p1,p2,p3 = nbPremierSuivant(4**k),nbPremierSuivant(5**k),nbPremierSuivant(6**k)
-            a=ElementDeZnZ(p1,p3)
+            a=ElmtZnZ(p1,p3)
             print(f"{k:3} : {a.rep}×{a.inverse().rep}=1 ({a.n})")
             print(f"           et {a.rep}{strExp(p2)}={a**p2}")
         
     def estUnCarre(self):
         """ Renvoie True si self est un carré dans ZnZ
-        >>> ElementDeZnZ(2,7).estUnCarre()
+        >>> ElmtZnZ(2,7).estUnCarre()
         True
-        >>> ElementDeZnZ(3,7).estUnCarre()
+        >>> ElmtZnZ(3,7).estUnCarre()
         False
         """
         return (self**((self.n-1)//2)).rep == 1
     
     def racineCarree(self):
         """ Renvoie la racine carrée de self dans ZnZ
-        >>> ElementDeZnZ(2,7).racineCarree()
-        ElementDeZnZ(4,7)
+        >>> ElmtZnZ(2,7).racineCarree()
+        ElmtZnZ(4,7)
         """
         assert self.estUnCarre(), (f"{self} n'est pas un carré")
         return self**((self.n+1)//4)
@@ -618,16 +618,14 @@ def demoVitesse():
         print("Logarithme discret :")
         for p in range(20,24):
             n=nbPremierSuivant(2**p)
-            b=ElementDeZnZ(10**int(p*3/10),n)
-            print(f"{p}: 2{strExp(ElementDeZnZ(2,n).logDiscret(b))}=={b}")
-
-ElmtZnZ = ElementDeZnZ
+            b=ElmtZnZ(10**int(p*3/10),n)
+            print(f"{p}: 2{strExp(ElmtZnZ(2,n).logDiscret(b))}=={b}")
 
 if __name__ == "__main__":
     import doctest
     doctest.testmod()
 
     #demoVitesse()
-    #ElementDeZnZ.demo1()
-    #ElementDeZnZ(8,60).demoDiv()
+    #ElmtZnZ.demo1()
+    #ElmtZnZ(8,60).demoDiv()
 

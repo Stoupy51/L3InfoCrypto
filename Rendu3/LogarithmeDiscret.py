@@ -25,7 +25,7 @@ def LogarithmeDiscret(a, b, p):
 
     # Si a n'est pas inversible, cette fonction ne fonctionne pas
     # On lance la version naïve
-    a_inv = ElementDeZnZ(a, p)
+    a_inv = ElmtZnZ(a, p)
     if not a_inv.estInversible():
         return logarithmeDebile(a, b, p)
     
