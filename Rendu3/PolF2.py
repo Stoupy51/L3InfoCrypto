@@ -43,7 +43,7 @@ class PolF2(object):
 			raise TypeError(f"Erreur : le paramètre passé n'est pas une liste ou un entier")
 		
 		# Suppression des 0 en fin de liste dans tous les cas car on est gentil et on veut pas d'erreur
-		while self.data[-1].rep == 0 and len(self.data) > 0:
+		while self.data[-1].rep == 0 and len(self.data) > 1:
 			self.data.pop()
 		
 		# Indication si le polynôme est un monôme pour optimiser les calculs
@@ -62,7 +62,7 @@ class PolF2(object):
 		>>> PolF2.monome(2)
 		PolF2([ElmtZnZ(0,2), ElmtZnZ(0,2), ElmtZnZ(1,2)])
 		"""
-		r = PolF2( [ElmtZnZ(0,2)]*i + [ElmtZnZ(1,2)] )
+		r = PolF2([1] + [0]*i)
 		r.isMonome = True
 		return r
 
@@ -93,14 +93,14 @@ class PolF2(object):
 		
 		# Sinon, on ajoute des 0 en fin de liste à celui qui a le plus petit degré
 		else:
-			# Si self est plus petit, on ajoute des 0 en fin de liste à self
+			# Si self est plus grand, on ajoute des 0 en fin de liste à other
 			if difference > 0:
-				selfWithZeros = self.data + [ElmtZnZ(0,2)] * difference
-				otherWithZeros = other.data
-			# Sinon, on ajoute des 0 en fin de liste à other
-			else:
 				selfWithZeros = self.data
-				otherWithZeros = other.data + [ElmtZnZ(0,2)] * -difference
+				otherWithZeros = other.data + [ElmtZnZ(0,2)] * difference
+			# Sinon, on ajoute des 0 en fin de liste à self
+			else:
+				selfWithZeros = self.data + [ElmtZnZ(0,2)] * -difference
+				otherWithZeros = other.data
 			# On compare terme à terme et on retourne la distance
 			for i in range(len(selfWithZeros)):
 				if selfWithZeros[i] != otherWithZeros[i]:
@@ -121,6 +121,13 @@ class PolF2(object):
 			return PolF2(int(self) ^ int(other))
 		else:
 			raise TypeError(f"Erreur : le paramètre passé n'est pas un polynôme dans F2 ou un entier")
+
+	def __radd__(self, other):
+		return self + other
+	def __sub__(self, other):
+		return self + other
+	def __rsub__(self, other):
+		return self + other
 
 	def __mul__(self, other):
 		"""
@@ -152,22 +159,66 @@ class PolF2(object):
 				return result
 		else:
 			raise TypeError(f"Erreur : le paramètre passé n'est pas un polynôme dans F2 ou un entier")
-			
+
+	def __rmul__(self, other):
+		return self * other
 		
 
 	def __mod__(self, other):
-		"""
-		>>> PolF2(0b11000101)%PolF2(0b11000)
+		""" Calcul du reste de la division euclidienne de self par other
+		>>> PolF2(0b11000101) % PolF2(0b11000)
 		PolF2([ElmtZnZ(1,2), ElmtZnZ(0,2), ElmtZnZ(1,2)])
 		"""
-		raise NotImplementedError
+		# Initialisation des variables
+		data = PolF2(self)
+		otherDegre = other.degre()
+		deg = data.degre()
+  
+		# Tant que le degré de data est supérieur ou égal au degré de other
+		while deg >= otherDegre:
+			# On calcule le monôme de degré (deg - otherDegre)
+			monome = PolF2.monome(deg - otherDegre)
+
+			# On soustrait à data le monôme * other
+			data += other * monome
+
+			# On met à jour le degré de data
+			deg = data.degre()
+
+		# On retourne le résultat
+		return data
 
 	def __floordiv__(self, other):
-		"""
-		>>> PolF2(0b11000101)//PolF2(0b11000)
+		""" Calcul du quotient de la division euclidienne de self par other
+		>>> PolF2(0b11000101) // PolF2(0b11000)
 		PolF2([ElmtZnZ(0,2), ElmtZnZ(0,2), ElmtZnZ(0,2), ElmtZnZ(1,2)])
 		"""
-		raise NotImplementedError
+		# Initialisation des variables
+		monomes = []
+		data = PolF2(self)
+		otherDegre = other.degre()
+		deg = data.degre()
+  
+		# Tant que le degré de data est supérieur ou égal au degré de other
+		while deg >= otherDegre:
+			# On calcule le monôme de degré (deg - otherDegre)
+			monome = PolF2.monome(deg - otherDegre)
+   
+			# On ajoute le monôme à la liste des monomes
+			monomes.append(monome)
+
+			# On soustrait à data le monôme * other
+			data += other * monome
+
+			# On met à jour le degré de data
+			deg = data.degre()
+
+		# On retourne le résultat
+		r = PolF2(0)
+		for i in monomes:
+			r += i
+		return r
+
 
 	def __int__(self):
 		""" Conversion en entier
@@ -179,7 +230,7 @@ class PolF2(object):
 		retour = 0
 
 		# Pour chaque élément de la liste
-		for i in self.data[::-1]:
+		for i in self.data:
 
 			# On ajoute la valeur de l'élément décalée à la valeur de retour
 			retour += (i.rep << decalage)
@@ -193,7 +244,7 @@ class PolF2(object):
 	def __str__(self):
 		""" Conversion en chaîne de caractères
 		>>> str(PolF2([ElmtZnZ(1,2), ElmtZnZ(0,2), ElmtZnZ(1,2)]))
-		'1 + x²
+		'1 + x²'
 		"""
 		# Initialisation de la chaîne de caractères
 		retour = ""
