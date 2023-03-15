@@ -112,6 +112,13 @@ def sontPremiers(a,b):
     """
     return PGCD(a,b)==1
 
+def nbPremierAleaParNbBits(b):
+    """ Renvoie un nombre premier de b bits """
+    n=2**(b-1)+1
+    while not(isprime(n)):
+        n+=2
+    return n
+
 
 def solDiophant(a,b,c):
     """
@@ -607,6 +614,8 @@ class ElmtZnZ(object):
         """
         assert self.estUnCarre(), (f"{self} n'est pas un carré")
         return self**((self.n+1)//4)
+
+ElementDeZnZ = ElmtZnZ
 
 def demoVitesse():
         print("Démo Vitesse")
