@@ -6,7 +6,7 @@ from ElemtE07Etd import *
 
 class CodeurE0765537(CodeurCA):
 	"""Codeur à partir de la courbe elliptique sur F65537"""
-	def __init__(self, a, B = ElemtE07(47106,21934,65537), G = ElemtE07(47106,21934,65537), p = 65537):
+	def __init__(self, a = 17, B = ElemtE07(11,2,23), G = ElemtE07(19,9,23), p = 23):
 		# Constructeur par copie
 		if isinstance(a, CodeurE0765537):
 			self.a = a.a
@@ -31,42 +31,56 @@ class CodeurE0765537(CodeurCA):
 	def __repr__(self):
 		return f"CodeurE0765537({self.a}, {self.B}, {self.G}, {self.p})"
 	
-	def binCode(self, monBinD:Binaire603)->Binaire603:
+	def binCode(self, monBinD:Binaire603) -> list:
 		""" Fonction qui chiffre un Binaire603 en utilisant la courbe elliptique sur F65537
 		Args:
 			monBinD : Binaire603 à chiffrer
 		Returns:
-			Binaire603 : Binaire603 chiffré
+			list : Liste d'élément chiffrés
 		
-		>>> CodeurE0765537(47106).binCode(Binaire603("test")).toNumber()
-		13036898041474994413324356361039415141793793
+		>>> CodeurE0765537(17).binCode(Binaire603("test"))
+		[ElemtE07(19,14,23),ElemtE07(10,15,23),ElemtE07(19,14,23),ElemtE07(19,14,23)]
 		"""
-		# On convertit le message en binaire en un nombre
-		m = monBinD.toNumber()
-		# On chiffre le message
-		c = m + (self.a * self.B)
-		# On convertit le chiffre en binaire
-		return Binaire603.fromNumber(c.__hash__())
+		# Initialisation de la liste qui contiendra le message chiffré
+		monBinC = []
+		aB = self.a * self.B
+
+		# Pour chaque caractère du message
+		for b in monBinD:
+			# On convertit le caractère en un nombre
+			m = ElemtE07.elemtE07APartirDeX(ElmtZnZ(b, self.p))
+			# On chiffre le caractère
+			c = m + aB
+			# On ajoute l'élément chiffré à la liste
+			monBinC.append(c)
+
+		return monBinC
 	
-	def binDecode(self, monBinC:Binaire603)->Binaire603:
+	def binDecode(self, monBinC:list)->Binaire603:
 		""" Fonction qui déchiffre un Binaire603 en utilisant la courbe elliptique sur F65537
 		Args:
-			monBinC : Binaire603 à déchiffrer
+			monBinC : Liste d'élément chiffrés
 		Returns:
 			Binaire603 : Binaire603 déchiffré
 		
-		>>> c = CodeurE0765537(47106)
-		>>> n = c.binCode(Binaire603("test")).toNumber()
-		>>> c.binDecode(Binaire603.fromNumber(n)).toString()
+		>>> c = CodeurE0765537()
+		>>> l = c.binCode(Binaire603("test"))
+		>>> c.binDecode(l).toString()
 		'test'
 		"""
-		# On convertit le chiffre en binaire en un nombre
-		c = ElemtE07.ElemtE07DepuisHash(monBinC.toNumber())
-		# On déchiffre le chiffre 
-		"""(bugué car multiplication de ElemtE07 par un autre ElemtE07)"""
-		m = c - (self.a * self.B)
-		# On convertit le message en binaire
-		return Binaire603.fromNumber(m)
+		# Initialisation de la liste qui contiendra le message déchiffré
+		monBinD = []
+		aB = self.a * self.B
+
+		# Pour chaque élément de la liste
+		for c in monBinC:
+			# On déchiffre l'élément
+			m = c - aB
+			# On ajoute le caractère déchiffré à la liste
+			monBinD.append(m.x.rep)
+
+		# On retourne le message déchiffré
+		return Binaire603(monBinD)
 
 if __name__ == "__main__":
 	import doctest
