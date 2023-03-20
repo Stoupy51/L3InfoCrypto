@@ -15,7 +15,7 @@ class CodeurCRC8(CodeurCA):
 			raise TypeError(f"Erreur : le paramètre passé n'est pas un polynôme dans F2")
 
 
-	def blocCode(self, M, verbose = False):
+	def blocCode(self, M, verbose: bool = False):
 		""" Renvoie M codé en CRC avec un octet de plus
 		>>> print(f"0x{CodeurCRC8().blocCode(0xab345678):x}")
 		0xab34567821

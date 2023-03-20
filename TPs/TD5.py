@@ -116,7 +116,7 @@ def testCollision(h, myStr):
 
 	return collisions, cols, totalTries
 
-def testCollision2(h, myStr, dico, verbose = False): 
+def testCollision2(h, myStr, dico, verbose: bool = False): 
 	collisions = 0
 	cols = []
 	hashStr = h.binCode(myStr)

@@ -65,7 +65,7 @@ class ElemtE07(object):
         return [x for x in ElemtE07.eDesElements(p)]
     
 
-    def eDesElements(p = 47, verbose = False):
+    def eDesElements(p = 47, verbose: bool = False):
         """ Renvoie un ensemble des ElemtE07 de Z/pZ
         >>> ElemtE07(8,3,17) in ElemtE07.eDesElements(17)
         True

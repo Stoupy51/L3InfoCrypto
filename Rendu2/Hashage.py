@@ -198,7 +198,7 @@ def testCollision(h, myStr):
 
 	return collisions, cols, totalTries
 
-def testCollision2(h, myStr, dico, verbose = False): 
+def testCollision2(h, myStr, dico, verbose: bool = False): 
 	""" Teste si une collision est possible pour une chaîne de caractères donnée en
 	comparant la chaîne de caractères avec toutes les chaînes de caractères d'un dictionnaire
 
