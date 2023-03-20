@@ -1,14 +1,12 @@
 
-import timeit
 import tp_primes
 from random import randint
 from arithmetiqueDansZ import *
 from Binaire603 import Binaire603
-
 from CodeurCA import CodeurCA
 
 class ChiffreurRSA(CodeurCA):
-	""""""
+	""" Chiffreur RSA basé sur la classe CodeurCA """
 	def __init__(self, e = 7, d = 103, n = 143):
 		if isinstance(e, ChiffreurRSA):
 			self.e = e.e
@@ -19,22 +17,36 @@ class ChiffreurRSA(CodeurCA):
 			self.d = ElmtZnZ(d, n)
 			self.n = n
 	
-	def generateKeys(maxPrime = 100):
+	def generateKeys(maxPrime = 100, verbose = False):
+		""" Méthode statique qui génère les clés pour un chiffreur RSA
+		maxPrime est un paramètre optionnel qui permet environ de choisir la taille des clés
+		"""
 		assert maxPrime < tp_primes.pLen, "maxPrime trop grand"
 		assert maxPrime >= 100, "maxPrime trop petit"
+
+		# Génération de p et q
 		p = tp_primes.p[randint(0, maxPrime)]
 		q = p
 		while (p == q):
 			q = tp_primes.p[randint(0, maxPrime)]
+		
+		# Calcul de n, phi, e et d
 		n = p * q
 		phi = (p - 1) * (q - 1)
 		e = p
 		d = n
+
+		# On s'assure que e et d sont premiers entre eux et que e < phi
 		while (e > phi or d > phi):
 			while (e == p or e == q or e > phi or sontPremiers(e, phi) != 1):
 				e = tp_primes.p[randint(0, maxPrime)]
 			d = ElmtZnZ(e, phi).inverse().rep
-		#print(f"p = {p}, q = {q}, n = {n}, phi = {phi}, e = {e}, d = {d}")
+		
+		# Affichage des clés si verbose
+		if (verbose):
+			print(f"generateKeys: p = {p}, q = {q}, n = {n}, phi = {phi}, e = {e}, d = {d}")
+		
+		# On retourne les clés
 		return (e, d, n)
 
 	def __str__(self):
@@ -68,7 +80,7 @@ if __name__ == "__main__":
 
 	# Test de chiffrement et déchiffrement
 	f = ChiffreurRSA()
-	texte = "Bonjour"
+	texte = "Bonjour mon cher ami comment ça va ?"
 	list1 = []
 	for i in texte:
 		list1.append(ord(i))
@@ -83,7 +95,7 @@ if __name__ == "__main__":
  
 	print("\nTest de déchiffrement avec 100 clés aléatoires : ")
 	for i in range(100):
-		ce, cd, cn = ChiffreurRSA.generateKeys(10000)
+		ce, cd, cn = ChiffreurRSA.generateKeys(tp_primes.pLen-1)
 		f = ChiffreurRSA(ce, cd, cn)
 		c = f(texte)
 		d = f.binDecode(c)
