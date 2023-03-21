@@ -79,6 +79,8 @@ class CodeurParite(CodeurCA):
 		>>> c = CodeurParite(8)
 		>>> print(c.blocDecode(c.blocCode(5615418648)))
 		5615418648
+		>>> print(CodeurParite(8).blocDecode(9841247361670726809))
+		151889728578705
 		"""
 		if not self.estBlocValide(valc):
 			return self.blocValideLePlusProche(self, valc)
@@ -110,10 +112,16 @@ class CodeurParite(CodeurCA):
 
 	def binCode(self, monBinD:Binaire603, verbose = False) -> Binaire603:
 		""" Renvoie le Binaire603 codé en parité
-		>>> c = CodeurParite(8)
-		>>> print(c.binCode(Binaire603("Hey !")).toNumber())
+
+		>>> print(CodeurParite(8).binCode(Binaire603("Hey !")).toNumber())
 		9512490631043219588
+		>>> print(CodeurParite(8).binCode(Binaire603("Heyaaaaaaaaaaaaaaaaaaaaaa !")).toNumber())
+		1101470398655224148861438082307466792909387827836669323444163803616017115611106100251647505596563
   		"""
+		# Si monBinD est un string, on le convertit en Binaire603
+		if isinstance(monBinD, str):
+			monBinD = Binaire603(monBinD)
+
 		# Conversion du Binaire603 en entier
 		numberD = monBinD.toNumber()
 		numberC = 0
@@ -122,7 +130,7 @@ class CodeurParite(CodeurCA):
 		while numberD > 0:
 			# On calcule le bloc à coder
 			bloc = numberD % (1 << self.m_block_size)
-			if verbose: print(f"bloc = {bloc} (en binaire : {Binaire603.fromNumber(bloc)})")
+			if verbose: print(f"binCode: bloc = {bloc} (en Binaire603 : {Binaire603.fromNumber(bloc)})")
 
 			# On décale number pour les prochains blocs
 			numberD >>= (self.n - 1)**2
@@ -131,17 +139,24 @@ class CodeurParite(CodeurCA):
 			blocC = self.blocCode(bloc)
 			numberC <<= (self.n)**2
 			numberC += blocC
-			if verbose: print(f"blocC = {blocC} (en binaire : {Binaire603.fromNumber(blocC)})")
+			if verbose: print(f"binCode: blocC = {blocC} (en Binaire603 : {Binaire603.fromNumber(blocC)})")
 
 		# On renvoie le résultat
 		return Binaire603.fromNumber(numberC)
 
-	def binDecode(self, monBinC:Binaire603) -> Binaire603:
+	def binDecode(self, monBinC:Binaire603, verbose = False) -> Binaire603:
 		""" Renvoie le Binaire603 décodé à partir de monBinC
 		>>> c = CodeurParite(8)
 		>>> print(c.binDecode(c.binCode(Binaire603("Hey !"))).toString())
 		Hey !
+		>>> c = CodeurParite(8)
+		>>> print(c.binDecode(c.binCode(Binaire603("hfurnziufheifezfehjuierhfirhefheifzndfuzhuzdhz !"))).toString())
+		hfurnziufheifezfehjuierhfirhefheifzndfuzhuzdhz !
   		"""
+		# Si monBinC est un string, on le convertit en Binaire603
+		if isinstance(monBinC, str):
+			monBinC = Binaire603(monBinC)
+
 		# Conversion du Binaire603 en entier
 		numberC = monBinC.toNumber()
 		numberD = 0
@@ -151,6 +166,7 @@ class CodeurParite(CodeurCA):
 		while numberC > 0:
 			# On calcule le bloc à décoder
 			blocC = numberC % blocMod
+			if verbose: print(f"binDecode: blocC = {blocC} (en Binaire603 : {Binaire603.fromNumber(blocC)})")
    
 			# On décale number pour les prochains blocs
 			numberC >>= (self.n)**2
@@ -159,14 +175,42 @@ class CodeurParite(CodeurCA):
 			bloc = self.blocDecode(blocC)
 			numberD <<= (self.n - 1)**2
 			numberD += bloc
+			if verbose: print(f"binDecode: bloc = {bloc} (en Binaire603 : {Binaire603.fromNumber(bloc)})")
 		
 		# On renvoie le résultat
 		return Binaire603.fromNumber(numberD)
 		
 
-
-
 if __name__ == "__main__":
 	import doctest
 	doctest.testmod()
+
+	# Test du codeur de parité avec 2 à 64 bits
+	for i in range(2, 65):
+		c = CodeurParite(i)
+		texte = Binaire603("Hey !")
+		texte2 = Binaire603("Heyaaaaaaaaaaaaaaaaaaaaaa !")
+		bool1 = c.binDecode(c.binCode(texte)) == texte
+		bool2 = c.binDecode(c.binCode(texte2)) == texte2
+		print(f"Test avec {i} bits: [texte1: {bool1}, texte2: {bool2}]")
+	
+	# Test du codeur de parité avec 16 bits
+	print("\n\n\nTest avec 16 bits:")
+	c = CodeurParite(16)
+	texte = Binaire603("Hey !")
+	texteC = c.binCode(texte, True)
+	texteD = c.binDecode(texteC, True)
+	print(f"Validité: [texte: {texteD == texte}]")
+
+
+	# Test du codeur de parité avec les 1000 premiers caractères de "Les Misérables.txt"
+	c = CodeurParite(8)
+	file = Binaire603(Binaire603.bin603DepuisFichier("Les Miserables.txt")[0:1000])
+	fileC = c.binCode(file, False)
+	fileD = c.binDecode(fileC, False)
+	print(f"\n\n\nFichier 'Les Miserables.txt':")
+	print(f"Fichier de base : {file.toNumber()}")
+	print(f"Codé : {fileC.toNumber()}")
+	print(f"Décodé : {fileD.toNumber()}")
+	print(f"Fichier décodé identique à celui de base : {file == fileD}")
 
