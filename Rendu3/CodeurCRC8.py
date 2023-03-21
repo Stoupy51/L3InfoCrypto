@@ -80,6 +80,8 @@ class CodeurCRC8(CodeurCA):
 		"""
 		if self.estBlocValide(valc):
 			return valc // self.Pg.degre()
+		else:
+			return self.blocValideLePlusProche(valc) // self.Pg.degre()
 
 
 	def blocAvecErreur(val, nbBits = 32, nbErreurs = 1):
