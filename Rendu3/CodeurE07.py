@@ -39,7 +39,7 @@ class CodeurE0765537(CodeurCA):
 			list : Liste d'élément chiffrés
 		
 		>>> CodeurE0765537(17).binCode(Binaire603("test"))
-		[ElemtE07(19,14,23),ElemtE07(10,15,23),ElemtE07(19,14,23),ElemtE07(19,14,23)]
+		[ElemtE07(19,14,23), ElemtE07(10,15,23), ElemtE07(19,14,23), ElemtE07(19,14,23)]
 		"""
 		# Initialisation de la liste qui contiendra le message chiffré
 		monBinC = []

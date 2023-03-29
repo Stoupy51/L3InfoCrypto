@@ -463,9 +463,8 @@ class ElemtE07(object):
 if __name__ == "__main__":
 	import doctest
 	doctest.testmod()
-
-	p = 11
-	ElemtE07.demo(p)
+	ElemtE07.demo(11)
+	ElemtE07.demo(67)
 
 
 
