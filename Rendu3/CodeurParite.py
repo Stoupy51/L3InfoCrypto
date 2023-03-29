@@ -1,14 +1,20 @@
 
+import random
+import Colors
 from Binaire603 import *
 from CodeurCA import *
 
 class CodeurParite(CodeurCA):
 	""" Classe définissant un codeur de parité """
-	def __init__(self, n:int):
+
+	def __init__(self, n:int = 8):
+
 		# Constructeur par copie
 		if isinstance(n, CodeurParite):
 			self.n = n.n
 			self.m_block_size = n.m_block_size
+
+		# Constructeur par valeur
 		elif isinstance(n, int):
 			self.n = n
 			self.m_block_size = (n - 1)**2 # 49 bits si n = 8
@@ -83,13 +89,13 @@ class CodeurParite(CodeurCA):
 		151889728578705
 		"""
 		if not self.estBlocValide(valc):
-			return self.blocValideLePlusProche(self, valc)
+			return self.blocValideLePlusProche(valc)
 
 		# On remet en matrice
 		matrice = []
 		for i in range(self.n):
 			matrice.append([])
-			for j in range(self.n):
+			for _ in range(self.n):
 				matrice[i].append(valc & 1)
 				valc >>= 1
 			matrice[i].reverse()
@@ -106,9 +112,97 @@ class CodeurParite(CodeurCA):
 		return r
 		
 
-	def estBlocValide(self, valc:int) -> bool:
-		""" Renvoie True si valc est un bloc valide, False sinon """
-		return True
+	def estBlocValide(self, valc:int, verbose:bool = False) -> bool:
+		""" Renvoie True si valc est un bloc valide, False sinon
+		On vérifie que la parité est bonne pour chaque ligne et chaque colonne
+		"""
+		# On remet en matrice
+		matrice = []
+		for i in range(self.n):
+			matrice.append([])
+			for _ in range(self.n):
+				matrice[i].append(valc & 1)
+				valc >>= 1
+			matrice[i].reverse()
+		matrice.reverse()
+
+		# On vérifie la parité de chaque ligne (et on compare avec la dernière valeur de la ligne)
+		estValide = True
+		for i in range(self.n):
+
+			# On calcule la parité de la ligne
+			parite = 0
+			for j in range(self.n - 1):
+				parite ^= matrice[i][j]
+			
+			# On compare avec la dernière valeur de la ligne
+			if parite != matrice[i][-1]:
+				if verbose: print(f"Erreur de parité sur la ligne {i}")
+				estValide = False
+		
+		# On vérifie la parité de chaque colonne (et on compare avec la dernière valeur de la colonne)
+		for j in range(self.n):
+
+			# On calcule la parité de la colonne
+			parite = 0
+			for i in range(self.n - 1):
+				parite ^= matrice[i][j]
+			
+			# On compare avec la dernière valeur de la colonne
+			if parite != matrice[-1][j]:
+				if verbose: print(f"Erreur de parité sur la colonne {j}")
+				estValide = False
+
+		return estValide
+	
+	def blocValideLePlusProche(self, valc:int, verbose:bool = False) -> int:
+		""" Renvoie le bloc valide le plus proche de valc
+		On cherche une erreur de parité sur une ligne et une colonne et on la corrige
+		"""
+		# On remet en matrice
+		matrice = []
+		for i in range(self.n):
+			matrice.append([])
+			for _ in range(self.n):
+				matrice[i].append(valc & 1)
+				valc >>= 1
+			matrice[i].reverse()
+		matrice.reverse()
+
+		# On vérifie la parité de chaque ligne (et on compare avec la dernière valeur de la ligne)
+		for i in range(self.n):
+
+			# On calcule la parité de la ligne
+			parite = 0
+			for j in range(self.n - 1):
+				parite ^= matrice[i][j]
+			
+			# On compare avec la dernière valeur de la ligne
+			if parite != matrice[i][-1]:
+				if verbose: print(f"Erreur de parité sur la ligne {i}")
+
+				# On cherche la colonne qui a une erreur de parité avec la ligne
+				for j in range(self.n):
+					parite = 0
+					for k in range(self.n - 1):
+						parite ^= matrice[k][j]
+					if parite != matrice[-1][j]:
+						if verbose: print(f"Erreur de parité sur la colonne {j}")
+
+						# On corrige l'erreur
+						matrice[i][j] ^= 1
+						break
+
+		# On remet tout dans un entier en ignorant la parité
+		r = 0
+		for i in range(self.n - 1):
+			for j in range(self.n - 1):
+				r <<= 1
+				r += matrice[self.n - 2 - i][self.n - 2 - j]
+
+		# On renvoie le résultat
+		return r
+
 
 	def binCode(self, monBinD:Binaire603, verbose = False) -> Binaire603:
 		""" Renvoie le Binaire603 codé en parité
@@ -179,6 +273,64 @@ class CodeurParite(CodeurCA):
 		
 		# On renvoie le résultat
 		return Binaire603.fromNumber(numberD)
+
+	def blocAvecErreur(self, valc:int, nbErreurs = 1):
+		""" Renvoie le bloc val avec nbErreurs bits changés
+		>>> CodeurParite().blocAvecErreur(0, 1) != 0
+		True
+		"""
+		# On remet en matrice
+		matrice = []
+		for i in range(self.n):
+			matrice.append([])
+			for _ in range(self.n):
+				matrice[i].append(valc & 1)
+				valc >>= 1
+			matrice[i].reverse()
+		matrice.reverse()
+
+		# On ajoute des erreurs
+		for _ in range(nbErreurs):
+			i = random.randint(0, self.n - 1)
+			j = random.randint(0, self.n - 1)
+			matrice[i][j] ^= 1
+		
+		# On remet tout dans un entier en ignorant la parité
+		r = 0
+		for i in range(self.n - 1):
+			for j in range(self.n - 1):
+				r <<= 1
+				r += matrice[self.n - 2 - i][self.n - 2 - j]
+
+		# On renvoie le résultat
+		return r
+
+	
+	def demoCorrection():
+		""" Fonction de démonstration de la correction d'erreurs """
+		print(f"\n\n{Colors.green}Démo de la correction d'erreurs{Colors.reset}")
+
+		# On crée un codeur de parité
+		c = CodeurParite(8)
+
+		# On crée un bloc de 32 bits
+		bloc = random.randint(0, 2**32 - 1)
+
+		# On code le bloc
+		blocCode = c.blocCode(bloc)
+
+		# On ajoute des erreurs
+		blocAvecErreurs = c.blocAvecErreur(blocCode, 1)
+
+		# On décode le bloc
+		blocDecode = c.blocDecode(blocAvecErreurs)
+
+		# On affiche le résultat
+		print(f"Code corrigé ? {Colors.blue}{blocDecode == bloc}{Colors.reset}")
+		print(f"bloc = {bloc} (en Binaire603 : {Binaire603.fromNumber(bloc)})")
+		print(f"blocDecode = {blocDecode} (en Binaire603 : {Binaire603.fromNumber(blocDecode)})")
+		
+
 		
 
 if __name__ == "__main__":
@@ -186,13 +338,15 @@ if __name__ == "__main__":
 	doctest.testmod()
 
 	# Test du codeur de parité avec 2 à 64 bits
+	validite = True
 	for i in range(2, 65):
 		c = CodeurParite(i)
 		texte = Binaire603("Hey !")
 		texte2 = Binaire603("Heyaaaaaaaaaaaaaaaaaaaaaa !")
 		bool1 = c.binDecode(c.binCode(texte)) == texte
 		bool2 = c.binDecode(c.binCode(texte2)) == texte2
-		print(f"Test avec {i} bits: [texte1: {bool1}, texte2: {bool2}]")
+		validite = validite and bool1 and bool2
+	print(f"Validité: {validite}")
 	
 	# Test du codeur de parité avec 16 bits
 	print("\n\n\nTest avec 16 bits:")
@@ -213,4 +367,7 @@ if __name__ == "__main__":
 	print(f"Codé : {fileC.toNumber()}")
 	print(f"Décodé : {fileD.toNumber()}")
 	print(f"Fichier décodé identique à celui de base : {file == fileD}")
+
+	# Demo de correction d'erreurs
+	CodeurParite.demoCorrection()
 
