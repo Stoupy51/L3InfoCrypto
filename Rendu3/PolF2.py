@@ -6,10 +6,11 @@ class PolF2(object):
 
 	def __init__(self, x):
 		""" Défini par une liste d'ElmntZnZ ou un entier
-		>>> PolF2([ElmtZnZ(1,2),0,1,0,1])
-		PolF2([ElmtZnZ(1,2), ElmtZnZ(0,2), ElmtZnZ(1,2), ElmtZnZ(0,2), ElmtZnZ(1,2)])
-		>>> PolF2(0b1000110010) #Entier -> Polynome dans F2
-		PolF2([ElmtZnZ(0,2), ElmtZnZ(1,2), ElmtZnZ(0,2), ElmtZnZ(0,2), ElmtZnZ(1,2), ElmtZnZ(1,2), ElmtZnZ(0,2), ElmtZnZ(0,2), ElmtZnZ(0,2), ElmtZnZ(1,2)])
+
+		>>> print(PolF2([ElmtZnZ(1,2),0,1,0,1]))
+		1 + x² + x⁴
+		>>> print(PolF2(0b1000110010)) #Entier -> Polynome dans F2
+		x + x⁴ + x⁵ + x⁹
 		>>> PolF2(0)
 		PolF2([ElmtZnZ(0,2)])
 		"""
@@ -59,24 +60,26 @@ class PolF2(object):
 	@staticmethod
 	def monome(i):
 		""" Création d'un monôme de degré i
-		>>> PolF2.monome(2)
-		PolF2([ElmtZnZ(0,2), ElmtZnZ(0,2), ElmtZnZ(1,2)])
+		>>> print(PolF2.monome(2))
+		x²
 		"""
 		r = PolF2([1] + [0]*i)
 		r.isMonome = True
 		return r
 
 	def degre(self):
-		"""
+		""" Retourne le degré du polynôme
 		>>> PolF2(0b100011).degre()
 		5
 		"""
 		return len(self.data) - 1
 
 	def distanceHamming(self, other):
-		"""
+		""" Retourne la distance de Hamming entre deux polynômes : le nombre de coefficients différents
 		>>> PolF2(0b100011).distanceHamming(PolF2(0b1100011))
 		1
+		>>> PolF2(0b100011).distanceHamming(PolF2(0b111))
+		2
 		"""
 		assert isinstance(other, PolF2), f"Erreur : le paramètre passé n'est pas un polynôme dans F2"
 
@@ -109,16 +112,20 @@ class PolF2(object):
 
 
 	def __add__(self, other):
+		""" Addition de deux polynômes dans F2 (@brief : c'est un XOR)
+
+		>>> print(PolF2(0b100011) + PolF2(0b1100011))
+		x⁶
+		>>> print(PolF2(0b111100011)+ PolF2(0b100011))
+		x⁶ + x⁷ + x⁸
 		"""
-		>>> PolF2(0b100011)+PolF2(0b1100011)
-		PolF2([ElmtZnZ(0,2), ElmtZnZ(0,2), ElmtZnZ(0,2), ElmtZnZ(0,2), ElmtZnZ(0,2), ElmtZnZ(0,2), ElmtZnZ(1,2)])
-		>>> PolF2(0b1100011)+ PolF2(0b100011)
-		PolF2([ElmtZnZ(0,2), ElmtZnZ(0,2), ElmtZnZ(0,2), ElmtZnZ(0,2), ElmtZnZ(0,2), ElmtZnZ(0,2), ElmtZnZ(1,2)])
-		"""
+		# Si le paramètre est un entier
 		if isinstance(other, int):
 			return PolF2(int(self) ^ other)
+		# Si le paramètre est un polynôme
 		elif isinstance(other, PolF2):
 			return PolF2(int(self) ^ int(other))
+		# Sinon, erreur
 		else:
 			raise TypeError(f"Erreur : le paramètre passé n'est pas un polynôme dans F2 ou un entier")
 
@@ -130,9 +137,10 @@ class PolF2(object):
 		return self + other
 
 	def __mul__(self, other):
-		"""
-		>>> PolF2.monome(2) * PolF2.monome(1)
-		PolF2([ElmtZnZ(0,2), ElmtZnZ(0,2), ElmtZnZ(0,2), ElmtZnZ(1,2)])
+		""" Multiplication de deux polynômes dans F2
+
+		>>> print(PolF2.monome(2) * PolF2.monome(1))
+		x³
 		"""
 		# Si le paramètre est un entier, on le convertit en polynôme
 		if isinstance(other, int):
@@ -162,18 +170,19 @@ class PolF2(object):
 
 	def __rmul__(self, other):
 		return self * other
-		
+
 
 	def __mod__(self, other):
 		""" Calcul du reste de la division euclidienne de self par other
-		>>> PolF2(0b11000101) % PolF2(0b11000)
-		PolF2([ElmtZnZ(1,2), ElmtZnZ(0,2), ElmtZnZ(1,2)])
+
+		>>> print(PolF2(0b11000101) % PolF2(0b11000))
+		1 + x²
 		"""
 		# Initialisation des variables
 		data = PolF2(self)
 		otherDegre = other.degre()
 		deg = data.degre()
-  
+
 		# Tant que le degré de data est supérieur ou égal au degré de other
 		while deg >= otherDegre:
 			# On calcule le monôme de degré (deg - otherDegre)
@@ -190,8 +199,8 @@ class PolF2(object):
 
 	def __floordiv__(self, other):
 		""" Calcul du quotient de la division euclidienne de self par other
-		>>> PolF2(0b11000101) // PolF2(0b11000)
-		PolF2([ElmtZnZ(0,2), ElmtZnZ(0,2), ElmtZnZ(0,2), ElmtZnZ(1,2)])
+		>>> print(PolF2(0b11000101) // PolF2(0b11000))
+		x³
 		"""
 		# Initialisation des variables
 		monomes = []
