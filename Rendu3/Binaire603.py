@@ -391,8 +391,10 @@ class Binaire603(list):#Voir Object ?
 if __name__ == "__main__":
     import doctest
     doctest.testmod()
-    #Binaire603.demo()
+    Binaire603.demo()
     lb=Binaire603([1,2,3,3,3,3,4,8,8,128])
     lf=lb.lFrequences()
     Binaire603.demoLivres()
+    #Binaire603.demoEntropie()
+    print("Fin du test")
 
