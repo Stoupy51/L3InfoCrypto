@@ -33,7 +33,7 @@ class Binaire603(list):#Voir Object ?
                 if c in Binaire603.dbin:
                     lb.append(Binaire603.dbin[c])
                 else:
-                    lb.append(Binaire603.dbin[' '])
+                    lb.append(ord(c) % 256)
                     #print(f"{c=}:{ascii(c)}",end=' | ')
             super().__init__(lb)
             #super().__init__( [Binaire603.dbin[c] for c in chaine] )

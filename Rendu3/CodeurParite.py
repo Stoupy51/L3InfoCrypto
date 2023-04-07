@@ -8,7 +8,7 @@ class CodeurParite(CodeurCA):
 	""" Classe définissant un codeur de parité """
 
 	def __init__(self, n:int = 8):
-
+		""" Constructeur de la classe CodeurParite """
 		# Constructeur par copie
 		if isinstance(n, CodeurParite):
 			self.n = n.n
@@ -25,6 +25,47 @@ class CodeurParite(CodeurCA):
 		return f"Codeur de parité sur {self.n} bits"
 	def __repr__(self):
 		return f"CodeurParite({self.n})"
+	
+	def intToMatrice(self, M:int, size:int, reverse:bool = False) -> list:
+		""" Renvoie la matrice correspondant à M selon la taille """
+		# On crée la matrice vide
+		matrice = []
+
+		# On remplit la matrice
+		for i in range(size):
+			matrice.append([])
+			for _ in range(size):
+				matrice[i].append(M & 1)
+				M >>= 1
+
+		# On inverse la matrice si reverse == True
+		if reverse:
+			for i in range(size):
+				matrice[i].reverse()
+			matrice.reverse()
+
+		# On renvoie la matrice
+		return matrice
+	
+	def matriceToInt(self, matrice:list, size:int, decal:int = 0) -> int:
+		""" Renvoie l'entier correspondant à la matrice selon la taille """
+		# On crée l'entier de retour
+		valc = 0
+
+		# On remplit l'entier
+		if decal == 0:
+			for i in range(size):
+				for j in range(size):
+					valc <<= 1
+					valc += matrice[i][j]
+		else:
+			for i in range(size):
+				for j in range(size):
+					valc <<= 1
+					valc += matrice[decal - i][decal - j]
+
+		# On renvoie l'entier
+		return valc
 
 	def blocCode(self, M:int, verbose = False) -> int:
 		""" Renvoie M codé en parité avec un bit de plus
@@ -36,12 +77,7 @@ class CodeurParite(CodeurCA):
 			raise ValueError(f"Erreur : M est trop grand pour être codé en parité : {M} > {self.m_block_size}")
 
 		# Mise en matrice de M pour calculer la parité plus facilement mais pas plus efficacement
-		matrice = []
-		for i in range(self.n - 1):
-			matrice.append([])
-			for j in range(self.n - 1):
-				matrice[i].append(M & 1)
-				M >>= 1
+		matrice = self.intToMatrice(M, self.n - 1)
 
 		# On affiche la matrice incomplète si verbose
 		if verbose: print(f"Matrice incomplète : {matrice}\n")
@@ -71,16 +107,12 @@ class CodeurParite(CodeurCA):
 		if verbose: print(f"Matrice complète : {matrice}\n")
 
 		# On remet tout dans un entier
-		valc = 0
-		for i in range(self.n):
-			for j in range(self.n):
-				valc <<= 1
-				valc += matrice[i][j]
+		valc = self.matriceToInt(matrice, self.n)
     
 		# On renvoie le résultat
 		return valc
 
-	def blocDecode(self, valc:int) -> int:
+	def blocDecode(self, valc:int, verbose:bool = False) -> int:
 		""" Renvoie M décodé à partir de valc
 		>>> c = CodeurParite(8)
 		>>> print(c.blocDecode(c.blocCode(5615418648)))
@@ -88,25 +120,14 @@ class CodeurParite(CodeurCA):
 		>>> print(CodeurParite(8).blocDecode(9841247361670726809))
 		151889728578705
 		"""
-		if not self.estBlocValide(valc):
-			return self.blocValideLePlusProche(valc)
+		if not self.estBlocValide(valc, verbose):
+			return self.blocValideLePlusProche(valc, verbose)
 
-		# On remet en matrice
-		matrice = []
-		for i in range(self.n):
-			matrice.append([])
-			for _ in range(self.n):
-				matrice[i].append(valc & 1)
-				valc >>= 1
-			matrice[i].reverse()
-		matrice.reverse()
+		# On remet en matrice en inversant la matrice
+		matrice = self.intToMatrice(valc, self.n, reverse = True)
 
 		# On remet tout dans un entier en ignorant la parité
-		r = 0
-		for i in range(self.n - 1):
-			for j in range(self.n - 1):
-				r <<= 1
-				r += matrice[self.n - 2 - i][self.n - 2 - j]
+		r = self.matriceToInt(matrice, self.n - 1, decal = (self.n - 2))
 
 		# On renvoie le résultat
 		return r
@@ -117,14 +138,7 @@ class CodeurParite(CodeurCA):
 		On vérifie que la parité est bonne pour chaque ligne et chaque colonne
 		"""
 		# On remet en matrice
-		matrice = []
-		for i in range(self.n):
-			matrice.append([])
-			for _ in range(self.n):
-				matrice[i].append(valc & 1)
-				valc >>= 1
-			matrice[i].reverse()
-		matrice.reverse()
+		matrice = self.intToMatrice(valc, self.n, reverse = True)
 
 		# On vérifie la parité de chaque ligne (et on compare avec la dernière valeur de la ligne)
 		estValide = True
@@ -137,7 +151,7 @@ class CodeurParite(CodeurCA):
 			
 			# On compare avec la dernière valeur de la ligne
 			if parite != matrice[i][-1]:
-				if verbose: print(f"Erreur de parité sur la ligne {i}")
+				if verbose: print(f"{Colors.orange}estBlocValide():{Colors.reset} Erreur de parité sur la ligne {i}")
 				estValide = False
 		
 		# On vérifie la parité de chaque colonne (et on compare avec la dernière valeur de la colonne)
@@ -150,7 +164,7 @@ class CodeurParite(CodeurCA):
 			
 			# On compare avec la dernière valeur de la colonne
 			if parite != matrice[-1][j]:
-				if verbose: print(f"Erreur de parité sur la colonne {j}")
+				if verbose: print(f"{Colors.orange}estBlocValide():{Colors.reset} Erreur de parité sur la colonne {j}")
 				estValide = False
 
 		return estValide
@@ -160,14 +174,7 @@ class CodeurParite(CodeurCA):
 		On cherche une erreur de parité sur une ligne et une colonne et on la corrige
 		"""
 		# On remet en matrice
-		matrice = []
-		for i in range(self.n):
-			matrice.append([])
-			for _ in range(self.n):
-				matrice[i].append(valc & 1)
-				valc >>= 1
-			matrice[i].reverse()
-		matrice.reverse()
+		matrice = self.intToMatrice(valc, self.n, reverse = True)
 
 		# On vérifie la parité de chaque ligne (et on compare avec la dernière valeur de la ligne)
 		for i in range(self.n):
@@ -179,7 +186,7 @@ class CodeurParite(CodeurCA):
 			
 			# On compare avec la dernière valeur de la ligne
 			if parite != matrice[i][-1]:
-				if verbose: print(f"Erreur de parité sur la ligne {i}")
+				if verbose: print(f"{Colors.orange}blocValideLePlusProche():{Colors.reset} Correction d'une erreur de parité sur la ligne {i}")
 
 				# On cherche la colonne qui a une erreur de parité avec la ligne
 				for j in range(self.n):
@@ -187,18 +194,14 @@ class CodeurParite(CodeurCA):
 					for k in range(self.n - 1):
 						parite ^= matrice[k][j]
 					if parite != matrice[-1][j]:
-						if verbose: print(f"Erreur de parité sur la colonne {j}")
+						if verbose: print(f"{Colors.orange}blocValideLePlusProche():{Colors.reset} Correction d'une erreur de parité sur la colonne {j}")
 
 						# On corrige l'erreur
 						matrice[i][j] ^= 1
 						break
 
 		# On remet tout dans un entier en ignorant la parité
-		r = 0
-		for i in range(self.n - 1):
-			for j in range(self.n - 1):
-				r <<= 1
-				r += matrice[self.n - 2 - i][self.n - 2 - j]
+		r = self.matriceToInt(matrice, self.n - 1, decal = (self.n - 2))
 
 		# On renvoie le résultat
 		return r
@@ -280,14 +283,7 @@ class CodeurParite(CodeurCA):
 		True
 		"""
 		# On remet en matrice
-		matrice = []
-		for i in range(self.n):
-			matrice.append([])
-			for _ in range(self.n):
-				matrice[i].append(valc & 1)
-				valc >>= 1
-			matrice[i].reverse()
-		matrice.reverse()
+		matrice = self.intToMatrice(valc, self.n, reverse = True)
 
 		# On ajoute des erreurs
 		for _ in range(nbErreurs):
@@ -296,11 +292,7 @@ class CodeurParite(CodeurCA):
 			matrice[i][j] ^= 1
 		
 		# On remet tout dans un entier en ignorant la parité
-		r = 0
-		for i in range(self.n - 1):
-			for j in range(self.n - 1):
-				r <<= 1
-				r += matrice[self.n - 2 - i][self.n - 2 - j]
+		r = self.matriceToInt(matrice, self.n)
 
 		# On renvoie le résultat
 		return r
@@ -308,7 +300,7 @@ class CodeurParite(CodeurCA):
 	
 	def demoCorrection():
 		""" Fonction de démonstration de la correction d'erreurs """
-		print(f"\n\n{Colors.green}Démo de la correction d'erreurs{Colors.reset}")
+		print(f"\n\n\n{Colors.green}Démo de la correction d'erreurs{Colors.reset}")
 
 		# On crée un codeur de parité
 		c = CodeurParite(8)
@@ -320,10 +312,11 @@ class CodeurParite(CodeurCA):
 		blocCode = c.blocCode(bloc)
 
 		# On ajoute des erreurs
-		blocAvecErreurs = c.blocAvecErreur(blocCode, 1)
+		nbErreurs = 1
+		blocAvecErreurs = c.blocAvecErreur(blocCode, nbErreurs)
 
 		# On décode le bloc
-		blocDecode = c.blocDecode(blocAvecErreurs)
+		blocDecode = c.blocDecode(blocAvecErreurs, True)
 
 		# On affiche le résultat
 		print(f"Code corrigé ? {Colors.blue}{blocDecode == bloc}{Colors.reset}")

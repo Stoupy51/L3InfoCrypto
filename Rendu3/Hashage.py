@@ -100,16 +100,13 @@ class hashNaif2(CodeurCA):
 		if not(isinstance(monBinD, Binaire603)):
 			monBinD = Binaire603(monBinD)
 
-		# Calcul de la seed
-		customSeed = 1
-		mult = 1
-		for b in monBinD:
-			customSeed += b * mult
-			mult *= 256
-		highValue = 2 ** 64
+		# Calcul de la seed en appliquant une formule spéciale et en remplaçant tous les espaces
+		customSeed = monBinD.toNumber()
+		highValue = 2 ** (self.bits * 2)
+		mediumValue = 2 ** self.bits
 
 		# On applique une formule magique à la seed pour éviter d'avoir la même pour la même chaîne de caractères sur différents bits
-		customSeed = (customSeed * monBinD.toNumber() + self.bits * 91) % highValue
+		customSeed = (customSeed * monBinD.toNumber() + self.bits * 91) % mediumValue
 
 		# Initialisation du tableau de bits et des variables paquet1 et paquet2
 		c = [ 1 for _ in range(self.bits) ]
@@ -121,15 +118,15 @@ class hashNaif2(CodeurCA):
 		while i < self.bits:
 			for byte in monBinD:
 				# Formules magiques
-				paquet1 = paquet1 * ((byte + self.bits + i + 1) * 7 + (564154587867 ^ paquet2.rep) - customSeed) + 1
-				paquet2 = (byte + 89 * self.bits + i + 1) * (customSeed - paquet1) + 1
+				paquet1 = paquet1 - ((byte + self.bits + i + 1) * 7 - (564157867 ^ paquet2.rep) - customSeed) + 1
+				paquet2 = (byte - 89 * self.bits + i + 1) * (customSeed - paquet1) + 1
 
 				# Inversion de paquet1 et paquet2 tout en application d'une formule magique à paquet1
 				paquet1, paquet2 = ElmtZnZ(paquet2.rep ^ (customSeed * paquet1.rep), highValue) + 1, paquet1 + 1
 
 				# Ajout du résultat de la multiplication de paquet1 et paquet2 modulo 2^bits au tableau de bits
 				# tout en appliquant une autre formule magique à ce résultat le tout modulo 256
-				c[i] = (c[i] + customSeed + i + (paquet1.rep // ((paquet2.rep >> 8) + 1) * customSeed // ((61 ^ paquet2.rep) + 1)) + 1) % 256
+				c[i] = (c[i] + customSeed + i + (paquet1.rep // ((paquet2.rep >> 8) + 1) + customSeed // ((61 ^ paquet2.rep) + 1)) + 1) % 256
 			
 			# On passe au bit suivant
 			i += 1
@@ -249,6 +246,9 @@ def testCollisionHasard(myStr, dico, verbose: bool = False):
 
 
 if (__name__ == "__main__"):
+	texte = "Bonjour à toutes et à tous !!!"
+	fauxTexte = "Bondour à toutes et à tous !!!"
+
 	# Jeu des naissances
 	print(f"\n{Colors.green}Jeu des naissances{Colors.reset}")
 	print("il y a collision :", collision())
@@ -258,13 +258,12 @@ if (__name__ == "__main__"):
 	# Test de hash naif
 	h = hashNaif(32)
 	print(f"\n{Colors.green}Test de hash naif 1{Colors.reset}")
-	print("Hash de 'Bonjour' sur", h.binCode("Bonjour"))
-	print("Hash de 'Bondour' sur", h.binCode("Bondour"))
+	print(f"Hash de '{texte}' sur", h.binCode(texte))
+	print(f"Hash de '{fauxTexte}' sur", h.binCode(fauxTexte))
 
 	# Test des collisions sur hash naif
-	print(f"\n{Colors.green}Test des collisions sur hash naif 1{Colors.reset}")
+	print(f"\n{Colors.green}Test des collisions sur hash naif 1 pour '{texte}'{Colors.reset}")
 	nbits = 4
-	texte = "Bonjour"
 	h = hashNaif(nbits)
 	print(f"Hash de {texte} : {h.binCode(texte)}")
 	nb, cols, totalTries = testCollision(h, texte)
@@ -274,8 +273,8 @@ if (__name__ == "__main__"):
 	# Test de hash naif 2
 	h = hashNaif2(32)
 	print(f"\n{Colors.green}Test de hash naif 2{Colors.reset}")
-	print("Hash de 'Bonjour' sur", h.binCode("Bonjour"))
-	print("Hash de 'Bondour' sur", h.binCode("Bondour"))
+	print(f"Hash de '{texte}' sur", h.binCode(texte))
+	print(f"Hash de '{fauxTexte}' sur", h.binCode(fauxTexte))
 
 	# Test des collisions sur hash naif 2
 	print(f"\n{Colors.green}Test des collisions sur hash naif 2{Colors.reset}")
@@ -302,7 +301,7 @@ if (__name__ == "__main__"):
 
 
 	# Test de la probabilité de collision pour hashNaif
-	print(f"\n{Colors.green}Test de la probabilité de collision pour hashNaif1{Colors.reset}")
+	print(f"\n\n{Colors.green}Test de la probabilité de collision pour hashNaif1{Colors.reset}")
 	n = 16
 	probabilites = []
 	for i in range(1, n + 1):
@@ -320,6 +319,7 @@ if (__name__ == "__main__"):
 	n = 16
 	probabilites = []
 	for i in range(1, n + 1):
+		print(f"Test pour {i} bits...")
 		h = hashNaif2(i)
 		nb, cols, totalTries = testCollision(h, texte)
 		probabilites.append(nb / totalTries)
@@ -334,6 +334,7 @@ if (__name__ == "__main__"):
 	n = 16
 	probabilites = []
 	for i in range(1, n + 1):
+		print(f"Test pour {i} bits...")
 		h = hashNaif2(i)
 		nb, cols, totalTries = testCollision2(h, texte, dico)
 		probabilites.append(nb / totalTries)
@@ -348,6 +349,7 @@ if (__name__ == "__main__"):
 	n = 16
 	probabilites = []
 	for i in range(1, n + 1):
+		print(f"Test pour {i} bits...")
 		hh = hash(texte)
 		nb, cols, totalTries = testCollisionHasard(texte, dico)
 		probabilites.append(nb / totalTries)

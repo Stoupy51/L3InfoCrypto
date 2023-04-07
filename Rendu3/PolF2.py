@@ -4,7 +4,7 @@ from arithmetiqueDansZ import *
 class PolF2(object):
 	"Polynôme dans F2"
 
-	def __init__(self, x):
+	def __init__(self, x, isMonome:bool = False):
 		""" Défini par une liste d'ElmntZnZ ou un entier
 
 		>>> print(PolF2([ElmtZnZ(1,2),0,1,0,1]))
@@ -17,6 +17,12 @@ class PolF2(object):
 		# Constructeur par copie
 		if isinstance(x, PolF2):
 			self.data = x.data.copy()
+			return
+		
+		# Cas d'un monôme créé par la méthode monome(i) (optimisation des calculs)
+		if isMonome:
+			self.data = [ElmtZnZ(1,2)] + [ElmtZnZ(0,2)]*x
+			self.isMonome = True
 			return
 
 		# Si x est une liste
@@ -47,11 +53,8 @@ class PolF2(object):
 		while self.data[-1].rep == 0 and len(self.data) > 1:
 			self.data.pop()
 		
-		# Indication si le polynôme est un monôme pour optimiser les calculs
-		compteur = 0
-		for i in self.data:
-			if i.rep == 1:
-				compteur += 1
+		# Indication si le polynôme est un monôme pour optimiser les calculs (un seul 1)
+		compteur = self.data.count(ElmtZnZ(1, 2))
 		self.isMonome = (compteur == 1)
 		
 		# Erreur si la liste est vide
@@ -63,9 +66,7 @@ class PolF2(object):
 		>>> print(PolF2.monome(2))
 		x²
 		"""
-		r = PolF2([1] + [0]*i)
-		r.isMonome = True
-		return r
+		return PolF2(i, isMonome = True)
 
 	def degre(self):
 		""" Retourne le degré du polynôme
@@ -148,23 +149,30 @@ class PolF2(object):
 		
 		# Sinon, si le paramètre est un polynôme
 		if isinstance(other, PolF2):
-			# Calcul du int du polynôme self pour les optimisations
-			selfInt = int(self)
+			# Si les deux polynômes sont des monômes, on crée un monôme de degré somme des degrés
+			if self.isMonome and other.isMonome:
+				return PolF2.monome(self.degre() + other.degre())
+
 
 			# Si c'est un monôme, on décale juste les bits
 			if other.isMonome:
-				return PolF2(selfInt << other.degre())
+				return PolF2(int(self) << other.degre())
+			
+			# Sinon, si self est un monôme, on décale juste les bits
+			elif self.isMonome:
+				return PolF2(int(other) << self.degre())
 			
 			# Sinon, on fait un produit de polynômes
 			else:
-				# On initialise le résultat à 0
-				result = PolF2(0)
+				# Calcul du int du polynôme self en avance et initialisation du résultat
+				selfInt = int(self)
+				result = 0
 				# Pour chaque bit de other.data
 				for i in range(other.degre() + 1):
-					# Si le bit est à 1, on décale selfInt de i bits et on l'ajoute au résultat
-					if other.data[i].rep == 1:
-						result += (selfInt << i)
-				return result
+					# Si le bit est à 1, on ajoute à result le décalage de selfInt
+					if other.data[i] == 1:
+						result ^= selfInt << i
+				return PolF2(result)
 		else:
 			raise TypeError(f"Erreur : le paramètre passé n'est pas un polynôme dans F2 ou un entier")
 
