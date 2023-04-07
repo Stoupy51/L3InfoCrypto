@@ -21,7 +21,7 @@ class PolF2(object):
 		
 		# Cas d'un monôme créé par la méthode monome(i) (optimisation des calculs)
 		if isMonome:
-			self.data = [ElmtZnZ(1,2)] + [ElmtZnZ(0,2)]*x
+			self.data = [ElmtZnZ(0,2)]*x + [ElmtZnZ(1,2)]
 			self.isMonome = True
 			return
 
@@ -152,7 +152,6 @@ class PolF2(object):
 			# Si les deux polynômes sont des monômes, on crée un monôme de degré somme des degrés
 			if self.isMonome and other.isMonome:
 				return PolF2.monome(self.degre() + other.degre())
-
 
 			# Si c'est un monôme, on décale juste les bits
 			if other.isMonome:
