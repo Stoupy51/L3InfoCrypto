@@ -80,7 +80,7 @@ class CodeurParite(CodeurCA):
 		matrice = self.intToMatrice(M, self.n - 1)
 
 		# On affiche la matrice incomplète si verbose
-		if verbose: print(f"Matrice incomplète : {matrice}\n")
+		if verbose: printMatrice(matrice)
 
 		# Calcul de la parité
 		matrice.append([])
@@ -104,7 +104,7 @@ class CodeurParite(CodeurCA):
 		matrice[-1].append(parite)
 
 		# On affiche la matrice si verbose
-		if verbose: print(f"Matrice complète : {matrice}\n")
+		if verbose: printMatrice(matrice)
 
 		# On remet tout dans un entier
 		valc = self.matriceToInt(matrice, self.n)
@@ -125,6 +125,9 @@ class CodeurParite(CodeurCA):
 
 		# On remet en matrice en inversant la matrice
 		matrice = self.intToMatrice(valc, self.n, reverse = True)
+
+		# On affiche la matrice si verbose
+		if verbose: printMatrice(matrice)
 
 		# On remet tout dans un entier en ignorant la parité
 		r = self.matriceToInt(matrice, self.n - 1, decal = (self.n - 2))
@@ -225,15 +228,15 @@ class CodeurParite(CodeurCA):
 		
 		# Tant qu'il reste des bits à coder
 		while numberD > 0:
-			# On calcule le bloc à coder
+			# On calcule le bloc à coder (self.m_block_size = 49 si self.n = 8)
 			bloc = numberD % (1 << self.m_block_size)
 			if verbose: print(f"binCode: bloc = {bloc} (en Binaire603 : {Binaire603.fromNumber(bloc)})")
 
 			# On décale number pour les prochains blocs
 			numberD >>= (self.n - 1)**2
-   
+
 			# On code le bloc et on l'ajoute à numberC
-			blocC = self.blocCode(bloc)
+			blocC = self.blocCode(bloc, verbose)
 			numberC <<= (self.n)**2
 			numberC += blocC
 			if verbose: print(f"binCode: blocC = {blocC} (en Binaire603 : {Binaire603.fromNumber(blocC)})")
@@ -269,7 +272,7 @@ class CodeurParite(CodeurCA):
 			numberC >>= (self.n)**2
    
 			# On décode le bloc et on l'ajoute à numberD
-			bloc = self.blocDecode(blocC)
+			bloc = self.blocDecode(blocC, verbose)
 			numberD <<= (self.n - 1)**2
 			numberD += bloc
 			if verbose: print(f"binDecode: bloc = {bloc} (en Binaire603 : {Binaire603.fromNumber(bloc)})")
@@ -312,7 +315,7 @@ class CodeurParite(CodeurCA):
 		blocCode = c.blocCode(bloc)
 
 		# On ajoute des erreurs
-		nbErreurs = 1
+		nbErreurs = 2
 		blocAvecErreurs = c.blocAvecErreur(blocCode, nbErreurs)
 
 		# On décode le bloc
@@ -324,11 +327,22 @@ class CodeurParite(CodeurCA):
 		print(f"blocDecode = {blocDecode} (en Binaire603 : {Binaire603.fromNumber(blocDecode)})")
 		
 
-		
+def printMatrice(matrice):
+	print("Matrice:")
+	for ligne in matrice:
+		print(ligne)
 
 if __name__ == "__main__":
 	import doctest
 	doctest.testmod()
+
+	"""# Test du verbose True
+	print("Test du verbose True:")
+	c = CodeurParite(8)
+	texte = Binaire603("Hey !")
+	texteC = c.binCode(texte, True)
+	texteD = c.binDecode(texteC, True)
+	print(f"Validité: {texteD == texte}")"""
 
 	# Test du codeur de parité avec 2 à 64 bits
 	validite = True
@@ -345,8 +359,8 @@ if __name__ == "__main__":
 	print("\n\n\nTest avec 16 bits:")
 	c = CodeurParite(16)
 	texte = Binaire603("Hey !")
-	texteC = c.binCode(texte, True)
-	texteD = c.binDecode(texteC, True)
+	texteC = c.binCode(texte, False)
+	texteD = c.binDecode(texteC, False)
 	print(f"Validité: [texte: {texteD == texte}]")
 
 
