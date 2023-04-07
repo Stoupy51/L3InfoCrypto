@@ -245,6 +245,26 @@ def testCollisionHasard(myStr, dico, verbose: bool = False):
 	return collisions, cols, len(dico)
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 if (__name__ == "__main__"):
 	texte = "Bonjour à toutes et à tous !!!"
 	fauxTexte = "Bondour à toutes et à tous !!!"
@@ -298,6 +318,21 @@ if (__name__ == "__main__"):
 	nb, cols, totalTries = testCollision2(h, texte, dico)
 	print(f"Pourcentage de collisions sur {round(100 * nb / totalTries, 5)}% (totalTries = {totalTries})")
 	print("Collisions :", cols)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 	# Test de la probabilité de collision pour hashNaif
